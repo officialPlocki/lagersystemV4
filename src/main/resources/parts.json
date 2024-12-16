@@ -1,0 +1,29 @@
+{
+  "parts": {
+    "P2411013-4": {
+      "name": "TRIMIX - der Lakeball-Krimi.",
+      "ean": "9783982650258"
+    },
+    "P2409016-3": {
+      "name": "Familienklausel",
+      "ean": "9783982650210"
+    },
+    "P2409018-2": {
+      "name": "Captain Edwards (2. Auflage)",
+      "ean": "9783982650227"
+    },
+    "P2411013-1": {
+      "name": "Captain Edwards (1. Auflage)",
+      "ean": "9783982650203"
+    }
+  },
+
+  "ignoringParts": {
+    "P2411023-9": "ignored",
+    "P2411023-8": "ignored",
+    "P2411023-7": "ignored",
+    "P2411013-6": "ignored",
+    "P2411013-5": "ignored",
+    "P2411013-2": "ignored"
+  }
+}
