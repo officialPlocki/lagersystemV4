@@ -10,7 +10,7 @@ import java.util.jar.Manifest;
 public class Main {
 
     public static void main(String[] args) {
-        String jarUrl = "https://github.com/username/repository/releases/latest/download/your-jar-file.jar";
+        String jarUrl = "https://github.com/officialPlocki/lagersystemV4/raw/refs/heads/main/latest/latest.jar";
 
         try {
             byte[] jarData = downloadJarToMemory(jarUrl);
