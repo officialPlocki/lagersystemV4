@@ -46,6 +46,8 @@ public class OrderViewFlow {
                 }
             });
         }
+        summarizingBody.remove(summarizingBody.getButton("confirm_button"));
+        summarizingBody.remove(summarizingBody.getButton("cancel_button"));
         mainBody = summarizingBody;
         Main.bodyHandler.setContentBody(mainBody);
     }

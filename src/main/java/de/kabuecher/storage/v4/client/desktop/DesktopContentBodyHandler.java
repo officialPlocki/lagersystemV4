@@ -18,6 +18,8 @@ public class DesktopContentBodyHandler {
     }
 
     public void setContentBody(BodyType bodyType) {
+        Dimension size = (Dimension) frame.getSize().clone();
+        boolean fullscreen = frame.getExtendedState() == JFrame.MAXIMIZED_BOTH;
         contentBody.removeAll();
 
         for (AWTEventListener awtEventListener : Toolkit.getDefaultToolkit().getAWTEventListeners()) {
@@ -32,6 +34,11 @@ public class DesktopContentBodyHandler {
         }
 
         frame.pack();
+
+        frame.setSize(size);
+        if(fullscreen) {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
     }
 
 }
