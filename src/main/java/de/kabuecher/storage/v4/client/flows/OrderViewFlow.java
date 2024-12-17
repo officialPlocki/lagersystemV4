@@ -46,10 +46,12 @@ public class OrderViewFlow {
                 }
             });
         }
-        summarizingBody.remove(summarizingBody.getButton("confirm_button"));
-        summarizingBody.remove(summarizingBody.getButton("cancel_button"));
+
         mainBody = summarizingBody;
         Main.bodyHandler.setContentBody(mainBody);
+        summarizingBody.remove(summarizingBody.getButton("confirm_button"));
+        summarizingBody.remove(summarizingBody.getButton("cancel_button"));
+        summarizingBody.repaint();
     }
     int positionIndex = 0;
     int positionIndexSub = 0;
