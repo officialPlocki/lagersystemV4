@@ -57,7 +57,7 @@ public class SevDesk {
     }
 
     public List<Offer> getOpenOffers() {
-        JSONObject offersJson = SevDeskQuery.query("/Order?status=500&createAfter=" + ZonedDateTime.now().minusDays(14), null, QueryMethod.GET);
+        JSONObject offersJson = SevDeskQuery.query("/Order?status=500&orderType=AN&createAfter=" + ZonedDateTime.now().minusDays(14), null, QueryMethod.GET);
 
         List<Offer> offers = new ArrayList<>();
         for (int i = 0; i < offersJson.getJSONArray("objects").length(); i++) {
@@ -72,6 +72,18 @@ public class SevDesk {
         offerJson = offerJson.getJSONArray("objects").getJSONObject(0);
 
         return offerJson.getString("id");
+    }
+
+    public void setAddressOfDeliveryNote(String offerID, String address) {
+        SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("address", address), QueryMethod.PUT);
+    }
+
+    public void setOfferStatus(String offerID, int status) {
+        SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("status", status), QueryMethod.PUT);
+    }
+
+    public void transformOfferToConfirmation(String offerID) {
+        SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("orderType", "AB"), QueryMethod.PUT);
     }
 
     public Offer createDeliveryNote(String offerID) {

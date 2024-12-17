@@ -91,8 +91,9 @@ public class ScanBody extends BodyType {
         setMinimumSize(new java.awt.Dimension(1218, 1012));
         setSize(new java.awt.Dimension(1218, 1012));
 
-        arg_label.setFont(new java.awt.Font("Oswald", 1, 72)); // NOI18N
+        arg_label.setFont(new java.awt.Font("Oswald", 1, 64)); // NOI18N
         arg_label.setForeground(new java.awt.Color(231, 231, 231));
+        arg_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         arg_label.setText("ARG1: arg2");
 
         jLabel2.setFont(new java.awt.Font("Oswald", 1, 72)); // NOI18N
@@ -119,15 +120,15 @@ public class ScanBody extends BodyType {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(427, 427, 427)
-                        .addComponent(arg_label))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(197, 197, 197)
                         .addComponent(scanTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(226, Short.MAX_VALUE))
+                        .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(arg_label, javax.swing.GroupLayout.PREFERRED_SIZE, 1141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(45, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(393, 393, 393)
@@ -137,11 +138,11 @@ public class ScanBody extends BodyType {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(142, 142, 142)
+                .addGap(139, 139, 139)
                 .addComponent(arg_label)
-                .addGap(129, 129, 129)
+                .addGap(132, 132, 132)
                 .addComponent(scanTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 435, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 446, Short.MAX_VALUE)
                 .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

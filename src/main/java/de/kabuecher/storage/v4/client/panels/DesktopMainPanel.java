@@ -7,6 +7,7 @@ package de.kabuecher.storage.v4.client.panels;
 import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.client.desktop.DesktopContentBodyHandler;
 import de.kabuecher.storage.v4.client.flows.IngoingInventoryFlow;
+import de.kabuecher.storage.v4.client.flows.OrderViewFlow;
 import de.kabuecher.storage.v4.client.flows.OutgoingInventoryFlow;
 
 import javax.swing.*;
@@ -123,6 +124,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         jLabel6.setText("- Versandcodes");
 
         scanField.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        scanField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         ship_button.setBackground(new java.awt.Color(231, 231, 231));
         ship_button.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
@@ -251,7 +253,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_ship_buttonActionPerformed
 
     private void orders_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orders_buttonActionPerformed
-        Main.bodyHandler.setContentBody(null);
+        new OrderViewFlow();
     }//GEN-LAST:event_orders_buttonActionPerformed
 
 

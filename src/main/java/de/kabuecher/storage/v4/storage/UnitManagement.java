@@ -3,6 +3,9 @@ package de.kabuecher.storage.v4.storage;
 import co.plocki.json.JSONFile;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UnitManagement {
     private final JSONFile jsonFile;
 
@@ -41,6 +44,89 @@ public class UnitManagement {
         } else {
             return false; // Store name not found
         }
+    }
+
+    public JSONObject searchForItemInStore(String storeName, String itemId, int quantity) {
+        //if in a box isn't enough, search in other boxes and return the quantity in multiple boxes
+        List<String> out = new ArrayList<>();
+        JSONObject result = new JSONObject();
+
+        if (jsonFile.has(storeName)) {
+            JSONObject store = jsonFile.get(storeName);
+            if (store.has("stacks")) {
+                JSONObject stacks = store.getJSONObject("stacks");
+                for (String stackName : stacks.keySet()) {
+                    JSONObject stack = stacks.getJSONObject(stackName);
+                    for (String boxId : stack.keySet()) {
+                        JSONObject box = stack.getJSONObject(boxId);
+                        if (box.has(itemId)) {
+                            if (box.getInt(itemId) >= quantity) {
+                                result.put(boxId, quantity);
+                                return result;
+                            } else {
+                                result.put(boxId, box.getInt(itemId));
+                                quantity -= box.getInt(itemId);
+
+                                while (quantity > 0) {
+                                    JSONObject object = searchForItemInStoreExcept(storeName, itemId, quantity, new String[]{boxId});
+                                    if(object == null || object.isEmpty()) {
+                                        return null;
+                                    } else {
+                                        result.put(String.valueOf(object.keys().next()), object.getInt(object.keys().next()));
+                                        quantity -= object.getInt(object.keys().next());
+                                    }
+                                }
+
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private JSONObject searchForItemInStoreExcept(String storeName, String itemId, int quantity, String[]... exceptionalBoxIds) {
+        //if in a box isn't enough, search in other boxes and return the quantity in multiple boxes
+        //return nothing if there is no box left with the item
+
+        if (jsonFile.has(storeName)) {
+            JSONObject store = jsonFile.get(storeName);
+            if (store.has("stacks")) {
+                JSONObject stacks = store.getJSONObject("stacks");
+                for (String stackName : stacks.keySet()) {
+                    JSONObject stack = stacks.getJSONObject(stackName);
+                    for (String boxId : stack.keySet()) {
+                        boolean isExceptional = false;
+                        for (String[] exceptionalBoxId : exceptionalBoxIds) {
+                            if (exceptionalBoxId[0].equals(boxId)) {
+                                isExceptional = true;
+                                break;
+                            }
+                        }
+                        if (isExceptional) {
+                            continue;
+                        }
+                        JSONObject box = stack.getJSONObject(boxId);
+                        if (box.has(itemId)) {
+                            if (box.getInt(itemId) >= quantity) {
+                                JSONObject result = new JSONObject();
+                                result.put(boxId, quantity);
+                                return result;
+                            } else {
+                                JSONObject result = new JSONObject();
+                                result.put(boxId, box.getInt(itemId));
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
 

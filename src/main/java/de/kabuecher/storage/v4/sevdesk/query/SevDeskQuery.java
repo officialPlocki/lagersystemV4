@@ -30,7 +30,8 @@ public class SevDeskQuery {
             }
 
             HttpRequest request = build.build();
-            return new JSONObject(new String(client.send(request, HttpResponse.BodyHandlers.ofByteArray()).body()));
+            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            return new JSONObject((new String(response.body()).startsWith("{") ? new String(response.body()) : "{}"));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

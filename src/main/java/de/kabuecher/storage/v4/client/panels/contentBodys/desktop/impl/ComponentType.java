@@ -29,7 +29,7 @@ public abstract class ComponentType extends JPanel {
         buttonMap.put(key, button);
     }
 
-    protected JButton getButton(String key) {
+    public JButton getButton(String key) {
         return buttonMap.get(key);
     }
 

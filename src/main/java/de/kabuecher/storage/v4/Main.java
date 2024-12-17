@@ -21,6 +21,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+
+
         jsonFile = new JSONFile("./.kabuecher/config.json",
                 new JSONValue() {
                     @Override
