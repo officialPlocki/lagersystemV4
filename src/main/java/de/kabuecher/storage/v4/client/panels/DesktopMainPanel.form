@@ -96,7 +96,7 @@
                                   <Component id="orders_button" alignment="0" pref="296" max="32767" attributes="0"/>
                                   <Component id="login_logout_button" alignment="0" max="32767" attributes="0"/>
                                   <Component id="ship_button" alignment="1" max="32767" attributes="0"/>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
@@ -114,6 +114,11 @@
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="fullscreenToggle" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -136,7 +141,9 @@
                       <Component id="hub_outgoing_button" min="-2" pref="88" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="ship_button" min="-2" pref="88" max="-2" attributes="0"/>
-                      <EmptySpace pref="191" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="fullscreenToggle" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -144,9 +151,9 @@
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                       <Component id="scanField" min="-2" pref="69" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                       <Component id="login_logout_button" min="-2" pref="62" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -301,6 +308,14 @@
                 <Property name="text" type="java.lang.String" value="V4.1"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="fullscreenToggle">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Vollbild"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fullscreenToggleActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -49,117 +49,116 @@ import java.security.SecureRandom;
 public class DesktopMainPanel extends javax.swing.JPanel {
 
     private final DesktopContentBodyHandler bodyHandler;
+    private final JFrame frame;
 
     /**
      * Creates new form MainPanel
      */
     public DesktopMainPanel(JFrame frame) {
         initComponents();
+        this.frame = frame;
 
         bodyHandler = new DesktopContentBodyHandler(frame, contentBody);
 
 
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                if(event instanceof KeyEvent keyEvent) {
-                    if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F9) {
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if(event instanceof KeyEvent keyEvent) {
+                if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F9) {
 
 
-                        String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                        SecureRandom RANDOM = new SecureRandom();
+                    String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                    SecureRandom RANDOM = new SecureRandom();
 
-                        StringBuilder sb = new StringBuilder(12);
-                        for (int i = 0; i < 12; i++) {
-                            int index = RANDOM.nextInt(CHARSET.length());
-                            sb.append(CHARSET.charAt(index));
-                        }
-
-                        String data = sb.toString();
-
-                        // Generate QR code
-                        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-                        BitMatrix bitMatrix;
-                        try {
-                            bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
-                        } catch (WriterException e) {
-                            throw new RuntimeException(e);
-                        }
-                        BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
-
-                        File qrCodeFile;
-                        try {
-                            qrCodeFile = File.createTempFile("qrCode", ".png");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        try {
-                            ImageIO.write(qrCodeImage, "PNG", qrCodeFile);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        float widthInches = 4f;
-                        float heightInches = 6f;
-                        float widthPoints = widthInches * 72;
-                        float heightPoints = heightInches * 72;
-
-                        File tmp;
-                        try {
-                            tmp = File.createTempFile("label", ".pdf");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        PdfWriter writer;
-                        try {
-                            writer = new PdfWriter(new FileOutputStream(tmp));
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                        PdfDocument pdfDoc = new PdfDocument(writer);
-                        Document document = new Document(pdfDoc, new com.itextpdf.kernel.geom.PageSize(widthPoints, heightPoints));
-
-                        document.add(new Paragraph(data).setFontSize(14).setTextAlignment(TextAlignment.CENTER));
-
-                        com.itextpdf.layout.element.Image qrImage;
-                        try {
-                            qrImage = new Image(com.itextpdf.io.image.ImageDataFactory.create(qrCodeFile.getAbsolutePath()));
-                        } catch (MalformedURLException e) {
-                            throw new RuntimeException(e);
-                        }
-                        qrImage.setAutoScale(true).setWidth(150).setHeight(150).setHorizontalAlignment(HorizontalAlignment.CENTER);
-                        document.add(qrImage);
-
-                        document.close();
-                        qrCodeFile.delete();
-
-                        try {
-                            PDDocument pdf = PDDocument.load(tmp);
-                            PrinterJob job = PrinterJob.getPrinterJob();
-
-                            for (PrintService printService : PrintServiceLookup.lookupPrintServices(null, null)) {
-                                if(printService.getName().equals(Main.getJsonFile().get("printerConfig").getString("label_printer"))) {
-                                    job.setPrintService(printService);
-                                    break;
-                                }
-                            }
-
-                            Paper paper = job.defaultPage().getPaper();
-
-                            PageFormat format = new PageFormat();
-                            format.setPaper(paper);
-
-                            Book book = new Book();
-                            book.append(new PDFPrintable(pdf, Scaling.SHRINK_TO_FIT), format, pdf.getNumberOfPages());
-                            job.setPageable(book);
-
-                            job.print();
-                        } catch (IOException | PrinterException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        tmp.delete();
+                    StringBuilder sb = new StringBuilder(12);
+                    for (int i = 0; i < 12; i++) {
+                        int index = RANDOM.nextInt(CHARSET.length());
+                        sb.append(CHARSET.charAt(index));
                     }
+
+                    String data = "BX"+ sb.substring(3, 12);
+
+                    // Generate QR code
+                    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                    BitMatrix bitMatrix;
+                    try {
+                        bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
+                    } catch (WriterException e) {
+                        throw new RuntimeException(e);
+                    }
+                    BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+
+                    File qrCodeFile;
+                    try {
+                        qrCodeFile = File.createTempFile("qrCode", ".png");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        ImageIO.write(qrCodeImage, "PNG", qrCodeFile);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    float widthInches = 4f;
+                    float heightInches = 6f;
+                    float widthPoints = widthInches * 72;
+                    float heightPoints = heightInches * 72;
+
+                    File tmp;
+                    try {
+                        tmp = File.createTempFile("label", ".pdf");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    PdfWriter writer;
+                    try {
+                        writer = new PdfWriter(new FileOutputStream(tmp));
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    PdfDocument pdfDoc = new PdfDocument(writer);
+                    Document document = new Document(pdfDoc, new com.itextpdf.kernel.geom.PageSize(widthPoints, heightPoints));
+
+                    document.add(new Paragraph(data).setFontSize(14).setTextAlignment(TextAlignment.CENTER));
+
+                    Image qrImage;
+                    try {
+                        qrImage = new Image(com.itextpdf.io.image.ImageDataFactory.create(qrCodeFile.getAbsolutePath()));
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    qrImage.setAutoScale(true).setWidth(150).setHeight(150).setHorizontalAlignment(HorizontalAlignment.CENTER);
+                    document.add(qrImage);
+
+                    document.close();
+                    qrCodeFile.delete();
+
+                    try {
+                        PDDocument pdf = PDDocument.load(tmp);
+                        PrinterJob job = PrinterJob.getPrinterJob();
+
+                        for (PrintService printService : PrintServiceLookup.lookupPrintServices(null, null)) {
+                            if(printService.getName().equals(Main.getJsonFile().get("printerConfig").getString("label_printer"))) {
+                                job.setPrintService(printService);
+                                break;
+                            }
+                        }
+
+                        Paper paper = job.defaultPage().getPaper();
+
+                        PageFormat format = new PageFormat();
+                        format.setPaper(paper);
+
+                        Book book = new Book();
+                        book.append(new PDFPrintable(pdf, Scaling.SHRINK_TO_FIT), format, pdf.getNumberOfPages());
+                        job.setPageable(book);
+
+                        job.print();
+                    } catch (IOException | PrinterException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    tmp.delete();
                 }
             }
         }, AWTEvent.KEY_EVENT_MASK);
@@ -192,6 +191,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         scanField = new javax.swing.JTextField();
         ship_button = new javax.swing.JButton();
         versionLabel = new javax.swing.JLabel();
+        fullscreenToggle = new javax.swing.JToggleButton();
         contentBody = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(17, 21, 28));
@@ -278,6 +278,13 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         versionLabel.setText("V4.1");
         versionLabel.setToolTipText("");
 
+        fullscreenToggle.setText("Vollbild");
+        fullscreenToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fullscreenToggleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout sideBarLayout = new javax.swing.GroupLayout(sideBar);
         sideBar.setLayout(sideBarLayout);
         sideBarLayout.setHorizontalGroup(
@@ -310,6 +317,10 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                                             .addComponent(jLabel6))))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
+            .addGroup(sideBarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fullscreenToggle)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         sideBarLayout.setVerticalGroup(
             sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -328,7 +339,9 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                 .addComponent(hub_outgoing_button, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ship_button, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(fullscreenToggle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
@@ -336,9 +349,9 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
-                .addGap(60, 60, 60)
+                .addGap(37, 37, 37)
                 .addComponent(scanField, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(35, 35, 35)
                 .addComponent(login_logout_button, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -415,9 +428,18 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_scanFieldActionPerformed
 
+    private void fullscreenToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenToggleActionPerformed
+        if(frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } else {
+            frame.setExtendedState(JFrame.NORMAL);
+        }
+    }//GEN-LAST:event_fullscreenToggleActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contentBody;
+    private javax.swing.JToggleButton fullscreenToggle;
     private javax.swing.JButton hub_ingoing_button;
     private javax.swing.JButton hub_outgoing_button;
     private javax.swing.JLabel jLabel2;

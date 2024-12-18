@@ -166,6 +166,7 @@ public class DesktopContentBodyHandler {
 
         if(bodyType != null) {
             bodyType.init();
+            bodyType.grabFocus();
         }
 
         frame.pack();
