@@ -21,8 +21,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-
-
         jsonFile = new JSONFile("./.kabuecher/config.json",
                 new JSONValue() {
                     @Override
@@ -70,18 +68,6 @@ public class Main {
                     public String objectName() {
                         return "config";
                     }
-                },
-                new JSONValue() {
-                    @Override
-                    public JSONObject object() {
-                        //label printer & normal printer
-                        return new JSONObject("{\"username\": \"\",\"password\": \"\",\"api_key\":\"\",\"api_secret\":\"\"}");
-                    }
-
-                    @Override
-                    public String objectName() {
-                        return "dp";
-                    }
                 }
         );
 
@@ -89,8 +75,8 @@ public class Main {
             jsonFile.save();
             new DesktopSetupFrame();
         }
-
         sevdesk_api_token = jsonFile.get("sevdesk_api_token").getString("value");
+
         String mode = jsonFile.get("config").getString("mode");
 
         if(mode.equalsIgnoreCase("client")) {

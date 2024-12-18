@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.client.utils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -12,7 +13,7 @@ public class Translateables {
 
     private JSONObject cachedPartFile;
     private Instant lastFetchTime;
-    private static final URI PARTS_URI = URI.create("https://storage.kabuecher.de/parts.json");
+    private static final URI PARTS_URI = URI.create("https://github.com/officialPlocki/lagersystemV4/raw/refs/heads/main/latest/parts.json");
 
     public String getNameByEAN(String ean) {
         JSONObject partFile = getPartFile();
@@ -82,20 +83,18 @@ public class Translateables {
 
     public boolean isIgnored(String partID) {
         JSONObject partFile = getPartFile();
-        JSONObject ignoringParts = partFile.getJSONObject("ignoringParts");
-        return ignoringParts.has(partID);
+        JSONArray ignoringParts = partFile.getJSONArray("ignoringParts");
+        return ignoringParts.toList().contains(partID);
     }
 
     public synchronized JSONObject getPartFile() {
-        // Check if the cache is valid
-        /*if (cachedPartFile != null && lastFetchTime != null) {
+        if (cachedPartFile != null && lastFetchTime != null) {
             Instant now = Instant.now();
-            if (now.isBefore(lastFetchTime.plusSeconds(15 * 60))) { // 15 minutes
+            if (now.isBefore(lastFetchTime.plusSeconds(15 * 60))) {
                 return cachedPartFile;
             }
         }
 
-        // Fetch the JSON data from the server
         try {
             HttpURLConnection connection = (HttpURLConnection) PARTS_URI.toURL().openConnection();
             connection.setRequestMethod("GET");
@@ -105,7 +104,7 @@ public class Translateables {
                 try (InputStream inputStream = connection.getInputStream()) {
                     String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     cachedPartFile = new JSONObject(jsonText);
-                    lastFetchTime = Instant.now(); // Update fetch time
+                    lastFetchTime = Instant.now();
                     return cachedPartFile;
                 }
             }
@@ -113,18 +112,7 @@ public class Translateables {
             e.printStackTrace();
         }
 
-        // Return the cached version if available, even if an error occurred
-        return cachedPartFile;*/
-
-        //get from resources
-        try {
-            InputStream inputStream = Translateables.class.getClassLoader().getResourceAsStream("parts.json");
-            String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            return new JSONObject(jsonText);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return cachedPartFile;
     }
 
 }

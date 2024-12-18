@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.sevdesk;
 
+import de.kabuecher.storage.v4.client.utils.Translateables;
 import de.kabuecher.storage.v4.sevdesk.impl.Contact;
 import de.kabuecher.storage.v4.sevdesk.impl.Part;
 import de.kabuecher.storage.v4.sevdesk.impl.builder.ContactBuilder;
@@ -117,7 +118,10 @@ public class SevDesk {
 
         List<OfferPos> positions = new ArrayList<>();
         for (int i = 0; i < orderJson.getJSONArray("objects").length(); i++) {
-            positions.add(new OfferBuilder().buildOfferPos(orderJson.getJSONArray("objects").getJSONObject(i)));
+            OfferPos pos = new OfferBuilder().buildOfferPos(orderJson.getJSONArray("objects").getJSONObject(i));
+            if(!new Translateables().isIgnored(pos.getId())) {
+                positions.add(pos);
+            }
         }
 
         return positions;

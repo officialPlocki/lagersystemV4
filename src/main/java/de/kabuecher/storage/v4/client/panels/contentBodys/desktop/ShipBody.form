@@ -37,32 +37,36 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="action_label" min="-2" pref="845" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="212" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="action_label" min="-2" pref="845" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="jLabel1" min="-2" pref="294" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="weightField" min="-2" pref="795" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" pref="294" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="374" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="button_1kg" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_500g" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_2kg" alignment="1" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_5kg" alignment="1" min="-2" pref="225" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="button_10kg" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_15kg" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_30kg" min="-2" pref="225" max="-2" attributes="0"/>
-                          <Component id="button_25kg" min="-2" pref="225" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="530" max="-2" attributes="0"/>
+                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="367" max="32767" attributes="0"/>
+              <EmptySpace pref="211" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabel1" min="-2" pref="294" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="459" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="less_button" min="-2" pref="311" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                      <Component id="more_button" min="-2" pref="311" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="286" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,27 +75,18 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
+              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="weightField" min="-2" pref="145" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="button_500g" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-                  <Component id="button_10kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
+                  <Component id="more_button" alignment="3" min="-2" pref="86" max="-2" attributes="0"/>
+                  <Component id="less_button" alignment="3" min="-2" pref="86" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="button_1kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-                  <Component id="button_15kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="button_2kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-                  <Component id="button_25kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="button_5kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-                  <Component id="button_30kg" alignment="3" min="-2" pref="58" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="594" max="32767" attributes="0"/>
+              <EmptySpace pref="397" max="32767" attributes="0"/>
               <Component id="action_label" min="-2" pref="48" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -113,101 +108,71 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
+          <Font name="Oswald" size="48" style="0"/>
         </Property>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="e7" green="e7" red="e7" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Gewicht angeben"/>
+        <Property name="text" type="java.lang.String" value="Versandangaben"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="button_500g">
+    <Component class="javax.swing.JTextField" name="weightField">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
+          <Font name="Oswald" size="62" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=500g"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_500gActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="weightFieldActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="button_1kg">
+    <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Oswald" size="36" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=1kg"/>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="e7" green="e7" red="e7" type="rgb"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="text" type="java.lang.String" value="H&#xf6;he (cm)"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Oswald" size="36" style="0"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="e7" green="e7" red="e7" type="rgb"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="text" type="java.lang.String" value="Gewicht (g)"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="more_button">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Oswald" size="36" style="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="mehr als 5cm"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_1kgActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="more_buttonActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="button_2kg">
+    <Component class="javax.swing.JButton" name="less_button">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Oswald" size="36" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=2kg"/>
+        <Property name="text" type="java.lang.String" value="weniger als 5cm"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_2kgActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="button_5kg">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=5kg"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_5kgActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="button_10kg">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=10kg"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_10kgActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="button_15kg">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=15kg"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_15kgActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="button_30kg">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=30kg"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_30kgActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="button_25kg">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Oswald" size="36" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="&lt;=25kg"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_25kgActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="less_buttonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

@@ -286,15 +286,6 @@ public class OrderViewFlow {
         sevDesk.printInvoiceID(invoice.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
         sevDesk.printOrderID(offer.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
 
-        /*
-
-        String addressString = address.getString("recipient") + "\n" +
-                address.getString("addr1") + "\n" +
-                (address.has("addr2") ? address.getString("addr2") + "\n" : "") +
-                address.getString("zip") + " " +
-                address.getString("city");
-         */
-
         JSONObject object = new JSONObject();
         object.put("recipient", bodyType.getTextField("recipient_field").getText());
         if(!bodyType.getTextField("first_adr_field").getText().isEmpty()) {
@@ -306,7 +297,7 @@ public class OrderViewFlow {
         object.put("zip", bodyType.getTextField("zip_field").getText());
         object.put("city", bodyType.getTextField("city_field").getText());
 
-        new DeliveryLabelPrinter().generateLabel(object, deliveryNote.getOrderNumber(), deliveryNote.getOrderNumber() + "," + object);
+        new DeliveryLabelPrinter().generateLabel(object, deliveryNote.getOrderNumber(), "LEF" + deliveryNote.getOrderNumber());
 
         Main.bodyHandler.setContentBody(null);
     }

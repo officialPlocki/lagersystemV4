@@ -21,14 +21,9 @@ public class ShipBody extends BodyType {
         initComponents();
 
         addLabel("action_label", action_label);
-        addButton("button_500g", button_500g);
-        addButton("button_1kg", button_1kg);
-        addButton("button_2kg", button_2kg);
-        addButton("button_5kg", button_5kg);
-        addButton("button_10kg", button_10kg);
-        addButton("button_15kg", button_15kg);
-        addButton("button_30kg", button_30kg);
-        addButton("button_25kg", button_25kg);
+        addButton("more_button", more_button);
+        addButton("less_button", less_button);
+        addTextField("weightField", weightField);
 
     }
 
@@ -48,14 +43,11 @@ public class ShipBody extends BodyType {
 
         action_label = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        button_500g = new javax.swing.JButton();
-        button_1kg = new javax.swing.JButton();
-        button_2kg = new javax.swing.JButton();
-        button_5kg = new javax.swing.JButton();
-        button_10kg = new javax.swing.JButton();
-        button_15kg = new javax.swing.JButton();
-        button_30kg = new javax.swing.JButton();
-        button_25kg = new javax.swing.JButton();
+        weightField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        more_button = new javax.swing.JButton();
+        less_button = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(17, 21, 28));
         setForeground(new java.awt.Color(231, 231, 231));
@@ -67,72 +59,43 @@ public class ShipBody extends BodyType {
         action_label.setForeground(new java.awt.Color(231, 231, 231));
         action_label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
 
-        jLabel1.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Oswald", 0, 48)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(231, 231, 231));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Gewicht angeben");
+        jLabel1.setText("Versandangaben");
 
-        button_500g.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_500g.setText("<=500g");
-        button_500g.addActionListener(new java.awt.event.ActionListener() {
+        weightField.setFont(new java.awt.Font("Oswald", 0, 62)); // NOI18N
+        weightField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        weightField.setToolTipText("");
+        weightField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_500gActionPerformed(evt);
+                weightFieldActionPerformed(evt);
             }
         });
 
-        button_1kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_1kg.setText("<=1kg");
-        button_1kg.addActionListener(new java.awt.event.ActionListener() {
+        jLabel2.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(231, 231, 231));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("Höhe (cm)");
+
+        jLabel3.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(231, 231, 231));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel3.setText("Gewicht (g)");
+
+        more_button.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        more_button.setText("mehr als 5cm");
+        more_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_1kgActionPerformed(evt);
+                more_buttonActionPerformed(evt);
             }
         });
 
-        button_2kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_2kg.setText("<=2kg");
-        button_2kg.addActionListener(new java.awt.event.ActionListener() {
+        less_button.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
+        less_button.setText("weniger als 5cm");
+        less_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_2kgActionPerformed(evt);
-            }
-        });
-
-        button_5kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_5kg.setText("<=5kg");
-        button_5kg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_5kgActionPerformed(evt);
-            }
-        });
-
-        button_10kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_10kg.setText("<=10kg");
-        button_10kg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_10kgActionPerformed(evt);
-            }
-        });
-
-        button_15kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_15kg.setText("<=15kg");
-        button_15kg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_15kgActionPerformed(evt);
-            }
-        });
-
-        button_30kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_30kg.setText("<=30kg");
-        button_30kg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_30kgActionPerformed(evt);
-            }
-        });
-
-        button_25kg.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
-        button_25kg.setText("<=25kg");
-        button_25kg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_25kgActionPerformed(evt);
+                less_buttonActionPerformed(evt);
             }
         });
 
@@ -144,96 +107,77 @@ public class ShipBody extends BodyType {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(91, 91, 91))))
+                        .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(374, 374, 374)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(button_1kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_500g, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_2kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_5kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(212, 212, 212)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(button_10kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_15kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_30kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_25kg, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(367, Short.MAX_VALUE))
+                            .addComponent(weightField, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(530, 530, 530)
+                        .addComponent(jLabel2)))
+                .addContainerGap(211, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(459, 459, 459))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(less_button, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(more_button, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(286, 286, 286))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
+                .addGap(94, 94, 94)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(weightField, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_500g, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_10kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_1kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_15kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_2kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_25kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_5kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_30kg, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 594, Short.MAX_VALUE)
+                    .addComponent(more_button, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(less_button, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 397, Short.MAX_VALUE)
                 .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void button_500gActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_500gActionPerformed
-        handleActionEvent("button_500g", evt);
-    }//GEN-LAST:event_button_500gActionPerformed
+    private void weightFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightFieldActionPerformed
+        if(weightField.getText().isEmpty()) {
+            less_button.setEnabled(false);
+            more_button.setEnabled(false);
+        } else {
+            if(!less_button.isEnabled()) {
+                less_button.setEnabled(true);
+                more_button.setEnabled(true);
+            }
+        }
+    }//GEN-LAST:event_weightFieldActionPerformed
 
-    private void button_1kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_1kgActionPerformed
-        handleActionEvent("button_1kg", evt);
-    }//GEN-LAST:event_button_1kgActionPerformed
+    private void more_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_more_buttonActionPerformed
+        handleActionEvent("more_button", evt);
+    }//GEN-LAST:event_more_buttonActionPerformed
 
-    private void button_2kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_2kgActionPerformed
-        handleActionEvent("button_2kg", evt);
-    }//GEN-LAST:event_button_2kgActionPerformed
-
-    private void button_5kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_5kgActionPerformed
-        handleActionEvent("button_5kg", evt);
-    }//GEN-LAST:event_button_5kgActionPerformed
-
-    private void button_10kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_10kgActionPerformed
-        handleActionEvent("button_10kg", evt);
-    }//GEN-LAST:event_button_10kgActionPerformed
-
-    private void button_15kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_15kgActionPerformed
-        handleActionEvent("button_15kg", evt);
-    }//GEN-LAST:event_button_15kgActionPerformed
-
-    private void button_30kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_30kgActionPerformed
-        handleActionEvent("button_30kg", evt);
-    }//GEN-LAST:event_button_30kgActionPerformed
-
-    private void button_25kgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_25kgActionPerformed
-        handleActionEvent("button_25kg", evt);
-    }//GEN-LAST:event_button_25kgActionPerformed
+    private void less_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_less_buttonActionPerformed
+        handleActionEvent("less_button", evt);
+    }//GEN-LAST:event_less_buttonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel action_label;
-    private javax.swing.JButton button_10kg;
-    private javax.swing.JButton button_15kg;
-    private javax.swing.JButton button_1kg;
-    private javax.swing.JButton button_25kg;
-    private javax.swing.JButton button_2kg;
-    private javax.swing.JButton button_30kg;
-    private javax.swing.JButton button_500g;
-    private javax.swing.JButton button_5kg;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton less_button;
+    private javax.swing.JButton more_button;
+    private javax.swing.JTextField weightField;
     // End of variables declaration//GEN-END:variables
 }

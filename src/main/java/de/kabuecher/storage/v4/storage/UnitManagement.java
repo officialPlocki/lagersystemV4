@@ -15,7 +15,7 @@ public class UnitManagement {
 
     public boolean removeItem(String storeName, String stackName, String boxId, String itemId, int amount) {
         if (jsonFile.has(storeName)) {
-            JSONObject store = jsonFile.get(storeName); // Corrected get() to getJSONObject()
+            JSONObject store = jsonFile.get(storeName);
             if (store.has("stacks")) {
                 JSONObject stacks = store.getJSONObject("stacks");
                 if (stacks.has(stackName)) {
@@ -30,24 +30,23 @@ public class UnitManagement {
                             }
                             return true;
                         } else {
-                            return false; // Item ID not found in the box
+                            return false;
                         }
                     } else {
-                        return false; // Box ID not found in the stack
+                        return false;
                     }
                 } else {
-                    return false; // Stack name not found
+                    return false;
                 }
             } else {
-                return false; // No stacks in the store
+                return false;
             }
         } else {
-            return false; // Store name not found
+            return false;
         }
     }
 
     public JSONObject searchForItemInStore(String storeName, String itemId, int quantity) {
-        //if in a box isn't enough, search in other boxes and return the quantity in multiple boxes
         List<String> out = new ArrayList<>();
         JSONObject result = new JSONObject();
 
@@ -66,9 +65,10 @@ public class UnitManagement {
                             } else {
                                 result.put(boxId, box.getInt(itemId));
                                 quantity -= box.getInt(itemId);
+                                out.add(boxId);
 
                                 while (quantity > 0) {
-                                    JSONObject object = searchForItemInStoreExcept(storeName, itemId, quantity, new String[]{boxId});
+                                    JSONObject object = searchForItemInStoreExcept(storeName, itemId, quantity, out.toArray(String[]::new));
                                     if(object == null || object.isEmpty()) {
                                         return null;
                                     } else {
@@ -173,12 +173,10 @@ public class UnitManagement {
         }
     }
 
-    // Retrieve the entire JSON structure
     public JSONObject getAllData() {
         return jsonFile.getFileObject();
     }
 
-    // Save changes to the file
     public void saveChanges() {
         try {
             jsonFile.save();

@@ -6,7 +6,7 @@
 
     <groupId>de.kabuecher.storage.v4</groupId>
     <artifactId>lagersystemV4</artifactId>
-    <version>v4.0.2</version>
+    <version>v4.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -93,6 +93,25 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java-core</artifactId>
+            <version>4.4.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-object-mappers-gson</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-objectmapper-jackson</artifactId>
+            <version>4.2.9</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>de.plocki</groupId>
             <artifactId>utilities</artifactId>
