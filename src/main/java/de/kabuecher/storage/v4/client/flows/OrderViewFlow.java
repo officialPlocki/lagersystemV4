@@ -4,6 +4,7 @@ import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.ChangeAddressBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.ScanBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.SummarizingBody;
+import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.WaitingBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
 import de.kabuecher.storage.v4.client.utils.DeliveryLabelPrinter;
@@ -69,6 +70,11 @@ public class OrderViewFlow {
     }
 
     private void submitOrder(Offer offer) {
+
+        WaitingBody waitingBody = new WaitingBody();
+        Main.bodyHandler.setContentBody(waitingBody);
+        waitingBody.getProgressBar().setValue(1);
+
         Main.addToLog("Submitting order: " + offer.getId());
         SevDesk sevDesk = new SevDesk();
         currentOffer = offer;
@@ -91,6 +97,8 @@ public class OrderViewFlow {
             }
         }
 
+        waitingBody.getProgressBar().setValue(5);
+
         boxScanBody = new ScanBody();
         boxScanBody.getActionLabel().setText("Masseneinbuchung in versch. Kisten = Kein Edit");
         boxScanBody.getLabel("arg_label").setText(subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString());
@@ -110,6 +118,8 @@ public class OrderViewFlow {
             @Override
             public void run() {}
         });
+
+        waitingBody.getProgressBar().setValue(10);
 
         Main.bodyHandler.setContentBody(boxScanBody);
     }
@@ -297,11 +307,7 @@ public class OrderViewFlow {
         changeAddressBody.addAction("continue_button", new BodyType.ActionEventRunnable() {
             @Override
             public void handleActionEvent(ActionEvent event) {
-                try {
-                    finalizeOrder(currentOffer, changeAddressBody);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                finalizeOrder(currentOffer, changeAddressBody);
             }
 
             @Override
@@ -314,19 +320,36 @@ public class OrderViewFlow {
         Main.addToLog("Order confirmed");
     }
 
-    private void finalizeOrder(Offer offer, BodyType bodyType) throws Exception {
+    private void finalizeOrder(Offer offer, BodyType bodyType) {
         Main.addToLog("Finalizing order");
+
+        WaitingBody waitingBody = new WaitingBody();
+
+        Main.bodyHandler.setContentBody(waitingBody);
+
+        waitingBody.getProgressBar().setValue(1);
         SevDesk sevDesk = new SevDesk();
         Offer deliveryNote = sevDesk.createDeliveryNote(offer.getId());
-        Invoice invoice = sevDesk.createInvoice(deliveryNote.getId());
+        waitingBody.getProgressBar().setValue(2);
+        Invoice invoice = sevDesk.createInvoice(offer.getId());
+        waitingBody.getProgressBar().setValue(3);
         sevDesk.setOfferStatus(offer.getId(), 1000);
-        sevDesk.transformOfferToConfirmation(offer.getId());
+        waitingBody.getProgressBar().setValue(4);
+        offer = sevDesk.transformOfferToConfirmation(offer.getId());
+        waitingBody.getProgressBar().setValue(5);
 
         sevDesk.setAddressOfDeliveryNote(deliveryNote.getId(), bodyType.getTextField("recipient_field").getText() + "\n" + bodyType.getTextField("first_adr_field").getText() + "\n" + (!bodyType.getTextField("second_adr_field").getText().isEmpty() ? bodyType.getTextField("second_adr_field").getText() + "\n" : "") + bodyType.getTextField("zip_field").getText() + " " + bodyType.getTextField("city_field").getText());
 
+        waitingBody.getProgressBar().setValue(6);
         sevDesk.printOrderID(deliveryNote.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
+
+        waitingBody.getProgressBar().setValue(7);
         sevDesk.printInvoiceID(invoice.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
+
+        waitingBody.getProgressBar().setValue(8);
         sevDesk.printOrderID(offer.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
+
+        waitingBody.getProgressBar().setValue(9);
 
         JSONObject object = new JSONObject();
         object.put("recipient", bodyType.getTextField("recipient_field").getText());
@@ -339,8 +362,13 @@ public class OrderViewFlow {
         object.put("zip", bodyType.getTextField("zip_field").getText());
         object.put("city", bodyType.getTextField("city_field").getText());
 
-        new DeliveryLabelPrinter().generateLabel(object, deliveryNote.getOrderNumber(), "LEF" + deliveryNote.getOrderNumber());
+        try {
+            new DeliveryLabelPrinter().generateLabel(object, deliveryNote.getOrderNumber(), "LEF" + deliveryNote.getOrderNumber());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
+        waitingBody.getProgressBar().setValue(10);
         Main.bodyHandler.setContentBody(null);
         Main.addToLog("Order finalized");
     }

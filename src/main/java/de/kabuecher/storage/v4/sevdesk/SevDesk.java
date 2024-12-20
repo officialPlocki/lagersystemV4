@@ -35,6 +35,7 @@ public class SevDesk {
         JSONObject invoiceJson = SevDeskQuery.query("/Invoice/" + invoiceID, null, QueryMethod.GET);
         invoiceJson = invoiceJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(invoiceJson);
         return new InvoiceBuilder().buildInvoice(invoiceJson);
     }
 
@@ -43,6 +44,7 @@ public class SevDesk {
         JSONObject invoicePosJson = SevDeskQuery.query("/InvoicePos/" + posID, null, QueryMethod.GET);
         invoicePosJson = invoicePosJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(invoicePosJson);
         return new InvoiceBuilder().buildInvoicePos(invoicePosJson);
     }
 
@@ -51,6 +53,7 @@ public class SevDesk {
         JSONObject invoiceJson = SevDeskQuery.query("/Invoice?invoiceNumber=" + invoiceNumber, null, QueryMethod.GET);
         invoiceJson = invoiceJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(invoiceJson);
         return invoiceJson.getString("id");
     }
 
@@ -59,6 +62,7 @@ public class SevDesk {
         JSONObject offerJson = SevDeskQuery.query("/Order/" + offerID, null, QueryMethod.GET);
         offerJson = offerJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(offerJson);
         return new OfferBuilder().buildOffer(offerJson);
     }
 
@@ -66,6 +70,7 @@ public class SevDesk {
         Main.addToLog("Getting open offers");
         JSONObject offersJson = SevDeskQuery.query("/Order?status=500&orderType=AN&createAfter=" + ZonedDateTime.now().minusDays(14), null, QueryMethod.GET);
 
+        System.out.println(offersJson);
         List<Offer> offers = new ArrayList<>();
         for (int i = 0; i < offersJson.getJSONArray("objects").length(); i++) {
             offers.add(new OfferBuilder().buildOffer(offersJson.getJSONArray("objects").getJSONObject(i)));
@@ -78,6 +83,7 @@ public class SevDesk {
         Main.addToLog("Getting offer ID for offer number " + offerNumber);
         JSONObject offerJson = SevDeskQuery.query("/Order?search=" + offerNumber, null, QueryMethod.GET);
         offerJson = offerJson.getJSONArray("objects").getJSONObject(0);
+        System.out.println(offerJson);
 
         return offerJson.getString("id");
     }
@@ -92,31 +98,42 @@ public class SevDesk {
         SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("status", status), QueryMethod.PUT);
     }
 
-    public void transformOfferToConfirmation(String offerID) {
+    public Offer transformOfferToConfirmation(String offerID) {
         Main.addToLog("Transforming offer with ID " + offerID + " to confirmation");
-        SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("orderType", "AB"), QueryMethod.PUT);
+        JSONObject response = SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("orderType", "AB"), QueryMethod.PUT);
+
+        return new OfferBuilder().buildOffer(response.getJSONObject("objects"));
+    }
+
+    public void transformConfirmationToOffer(String offerID) {
+        Main.addToLog("Transforming confirmation with ID " + offerID + " to offer");
+        SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("orderType", "AN"), QueryMethod.PUT);
     }
 
     public Offer createDeliveryNote(String offerID) {
         Main.addToLog("Creating delivery note from offer with ID " + offerID);
-        JSONObject deliveryNoteJson = SevDeskQuery.query("/Order/Factory/createPackingListFromOrder", new JSONObject().put("id", offerID).put("objectName", "Order"), QueryMethod.POST);
+        JSONObject deliveryNoteJson = SevDeskQuery.query("/Order/Factory/createPackingListFromOrder", new JSONObject().put("order", new JSONObject().put("id", offerID).put("objectName", "Order")), QueryMethod.POST);
 
-        return new OfferBuilder().buildOffer(deliveryNoteJson);
+        System.out.println(deliveryNoteJson);
+
+        return new OfferBuilder().buildOffer(deliveryNoteJson.getJSONObject("objects"));
     }
 
     public Offer createDeliveryNoteWithDifferentAddress(String offerID, String address) {
         Main.addToLog("Creating delivery note from offer with ID " + offerID + " with address " + address);
-        JSONObject deliveryNoteJson = SevDeskQuery.query("/Order/Factory/createPackingListFromOrder", new JSONObject().put("id", offerID).put("objectName", "Order"), QueryMethod.POST);
+        JSONObject deliveryNoteJson = SevDeskQuery.query("/Order/Factory/createPackingListFromOrder", new JSONObject().put("order", new JSONObject().put("id", offerID).put("objectName", "Order")).put("partialType", "RE"), QueryMethod.POST);
 
+        System.out.println(deliveryNoteJson);
         deliveryNoteJson = SevDeskQuery.query("/Order/" + deliveryNoteJson.getJSONArray("objects").getJSONObject(0).getString("id"), new JSONObject().put("address", address), QueryMethod.PUT);
-        return new OfferBuilder().buildOffer(deliveryNoteJson);
+        return new OfferBuilder().buildOffer(deliveryNoteJson.getJSONObject("objects"));
     }
 
     public Invoice createInvoice(String offerID) {
         Main.addToLog("Creating invoice from offer with ID " + offerID);
-        JSONObject invoiceJson = SevDeskQuery.query("/Invoice/Factory/createInvoiceFromOrder", new JSONObject().put("id", offerID).put("objectName", "Order"), QueryMethod.POST);
+        JSONObject invoiceJson = SevDeskQuery.query("/Invoice/Factory/createInvoiceFromOrder", new JSONObject().put("order", new JSONObject().put("id", offerID).put("objectName", "Order")), QueryMethod.POST);
 
-        return new InvoiceBuilder().buildInvoice(invoiceJson);
+        System.out.println(invoiceJson);
+        return new InvoiceBuilder().buildInvoice(invoiceJson.getJSONObject("objects"));
     }
 
     public Part getPart(String partID) {
@@ -124,6 +141,7 @@ public class SevDesk {
         JSONObject partJson = SevDeskQuery.query("/Part/" + partID, null, QueryMethod.GET);
         partJson = partJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(partJson);
         return new PartBuilder().buildPart(partJson);
     }
 
@@ -139,6 +157,7 @@ public class SevDesk {
             }
         }
 
+        System.out.println(orderJson);
         return positions;
     }
 
@@ -151,6 +170,7 @@ public class SevDesk {
             parts.add(new PartBuilder().buildPart(partsJson.getJSONArray("objects").getJSONObject(i)));
         }
 
+        System.out.println(partsJson);
         return parts;
     }
 
@@ -159,6 +179,7 @@ public class SevDesk {
         JSONObject partJson = SevDeskQuery.query("/Part?search=" + partNumber, null, QueryMethod.GET);
         partJson = partJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(partJson);
         return partJson.getString("id");
     }
 
@@ -167,6 +188,7 @@ public class SevDesk {
         JSONObject contactJson = SevDeskQuery.query("/Contact/" + contactID, null, QueryMethod.GET);
         contactJson = contactJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(contactJson);
         return new ContactBuilder().buildContact(contactJson);
     }
 
@@ -175,6 +197,7 @@ public class SevDesk {
         JSONObject contactJson = SevDeskQuery.query("/Contact?search=" + contactName, null, QueryMethod.GET);
         contactJson = contactJson.getJSONArray("objects").getJSONObject(0);
 
+        System.out.println(contactJson);
         return contactJson.getString("id");
     }
 

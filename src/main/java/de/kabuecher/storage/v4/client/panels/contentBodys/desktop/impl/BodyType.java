@@ -29,6 +29,10 @@ public abstract class BodyType extends JPanel {
         buttonMap.put(key, button);
     }
 
+    public JProgressBar getProgressBar() {
+        return null;
+    }
+
     public void addComponent(String key, ComponentType component) {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("Key must not be null or empty.");

@@ -151,8 +151,6 @@ public class Main {
         }
         sevdesk_api_token = jsonFile.get("sevdesk_api_token").getString("value");
 
-        System.out.println(new SendCloud().getParcelLabel(new SevDesk().getOffer(new SevDesk().getOfferID("A2024120184")), 1002, 10));
-
         String mode = jsonFile.get("config").getString("mode");
 
         if(mode.equalsIgnoreCase("client")) {
