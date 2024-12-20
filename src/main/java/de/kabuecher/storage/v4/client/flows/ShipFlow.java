@@ -117,10 +117,7 @@ public class ShipFlow {
     private void moreButtonClicked(Offer offer, String weight) {
         Main.addToLog("More button clicked");
         SendCloud sendCloud = new SendCloud();
-        File label = new File("") /*sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 6)*/;
-
-        printLabel(label);
-
+        sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 15);
         Main.bodyHandler.setContentBody(null);
         Main.addToLog("Label printed");
     }
@@ -128,9 +125,7 @@ public class ShipFlow {
     private void lessButtonClicked(Offer offer, String weight) {
         Main.addToLog("Less button clicked");
         SendCloud sendCloud = new SendCloud();
-        File label = new File("") /*sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 4)*/;
-
-        printLabel(label);
+        sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 5);
         Main.bodyHandler.setContentBody(null);
         Main.addToLog("Label printed");
     }

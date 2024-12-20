@@ -6,7 +6,6 @@ import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.ScanBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.SummarizingBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.WaitingBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
-import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
 import de.kabuecher.storage.v4.client.utils.DeliveryLabelPrinter;
 import de.kabuecher.storage.v4.client.utils.Translateables;
 import de.kabuecher.storage.v4.sevdesk.SevDesk;
@@ -311,7 +310,7 @@ public class PackOrderFlow {
         waitingBody.getProgressBar().setValue(3);
         sevDesk.setOfferStatus(offer.getId(), 1000);
         waitingBody.getProgressBar().setValue(4);
-        offer = sevDesk.transformOfferToConfirmation(offer.getId());
+        offer = sevDesk.transformOfferToConfirSmation(offer.getId());
         waitingBody.getProgressBar().setValue(5);
 
         sevDesk.setAddressOfDeliveryNote(deliveryNote.getId(), bodyType.getTextField("recipient_field").getText() + "\n" + bodyType.getTextField("first_adr_field").getText() + "\n" + (!bodyType.getTextField("second_adr_field").getText().isEmpty() ? bodyType.getTextField("second_adr_field").getText() + "\n" : "") + bodyType.getTextField("zip_field").getText() + " " + bodyType.getTextField("city_field").getText());

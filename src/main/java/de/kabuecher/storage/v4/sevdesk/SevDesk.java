@@ -98,7 +98,7 @@ public class SevDesk {
         SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("status", status), QueryMethod.PUT);
     }
 
-    public Offer transformOfferToConfirmation(String offerID) {
+    public Offer transformOfferToConfirSmation(String offerID) {
         Main.addToLog("Transforming offer with ID " + offerID + " to confirmation");
         JSONObject response = SevDeskQuery.query("/Order/" + offerID, new JSONObject().put("orderType", "AB"), QueryMethod.PUT);
 
