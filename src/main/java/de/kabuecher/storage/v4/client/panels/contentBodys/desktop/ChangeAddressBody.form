@@ -295,6 +295,9 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBox1">
       <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="1c" green="15" red="11" type="rgb"/>
+        </Property>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Oswald" size="36" style="0"/>
         </Property>

@@ -436,12 +436,14 @@ public class DesktopMainPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_scanFieldActionPerformed
 
     private void fullscreenToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenToggleActionPerformed
-        if(frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+        if(frame.getExtendedState() == JFrame.NORMAL) {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            Main.addToLog("Fullscreen disabled");
+            frame.setUndecorated(true);
+            Main.addToLog("Fullscreen enabled");
         } else {
             frame.setExtendedState(JFrame.NORMAL);
-            Main.addToLog("Fullscreen enabled");
+            frame.setUndecorated(false);
+            Main.addToLog("Fullscreen disabled");
         }
     }//GEN-LAST:event_fullscreenToggleActionPerformed
 

@@ -43,7 +43,7 @@ public class LoginBody extends BodyType {
 
         overlayPanel = new javax.swing.JPanel();
         login_title = new javax.swing.JLabel();
-        password_textfield = new javax.swing.JTextField();
+        password_textfield = new javax.swing.JPasswordField();
         username_textfield = new javax.swing.JTextField();
         confirm_button = new javax.swing.JButton();
         action_label = new javax.swing.JLabel();
@@ -147,7 +147,7 @@ public class LoginBody extends BodyType {
     private javax.swing.JButton confirm_button;
     private javax.swing.JLabel login_title;
     private javax.swing.JPanel overlayPanel;
-    private javax.swing.JTextField password_textfield;
+    private javax.swing.JPasswordField password_textfield;
     private javax.swing.JTextField username_textfield;
     // End of variables declaration//GEN-END:variables
 }

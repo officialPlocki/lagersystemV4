@@ -30,6 +30,12 @@ public class ChangeAddressBody extends BodyType {
         addTextField("zip_field", zip_field);
         addTextField("country_field", country_field);
         addButton("continue_button", continue_button);
+        recipient_field.setEnabled(false);
+        first_adr_field.setEnabled(false);
+        second_adr_field.setEnabled(false);
+        city_field.setEnabled(false);
+        zip_field.setEnabled(false);
+        country_field.setEnabled(false);
     }
 
     @Override
@@ -152,6 +158,7 @@ public class ChangeAddressBody extends BodyType {
         jLabel7.setForeground(new java.awt.Color(231, 231, 231));
         jLabel7.setText("Postleitzahl");
 
+        jCheckBox1.setBackground(new java.awt.Color(17, 21, 28));
         jCheckBox1.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
         jCheckBox1.setForeground(new java.awt.Color(231, 231, 231));
         jCheckBox1.setText("Lieferaddresse ist nicht Rechnungsadresse");
