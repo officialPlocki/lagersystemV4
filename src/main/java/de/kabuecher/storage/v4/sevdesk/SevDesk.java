@@ -134,7 +134,7 @@ public class SevDesk {
         List<OfferPos> positions = new ArrayList<>();
         for (int i = 0; i < orderJson.getJSONArray("objects").length(); i++) {
             OfferPos pos = new OfferBuilder().buildOfferPos(orderJson.getJSONArray("objects").getJSONObject(i));
-            if(!new Translateables().isIgnored(pos.getId())) {
+            if(!new Translateables().isIgnored(pos.getPart().getId())) {
                 positions.add(pos);
             }
         }
