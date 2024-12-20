@@ -32,6 +32,8 @@ import javax.print.PrintServiceLookup;
 public class DeliveryLabelPrinter {
 
     public void generateLabel(JSONObject address, String orderNumber, String qrData) throws Exception {
+
+        Main.addToLog("Generating label for order " + orderNumber);
         // Generate QR code
         BufferedImage qrCodeImage = generateQRCodeImage(Base64.getEncoder().encodeToString(qrData.getBytes()));
 
@@ -95,9 +97,14 @@ public class DeliveryLabelPrinter {
         }
 
         tmp.delete();
+
+        Main.addToLog("Label printed");
     }
 
     private static BufferedImage generateQRCodeImage(String data) throws WriterException {
+
+        Main.addToLog("Generating QR code for data: " + data);
+
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);

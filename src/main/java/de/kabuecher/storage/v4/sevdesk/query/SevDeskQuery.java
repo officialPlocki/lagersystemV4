@@ -14,6 +14,9 @@ public class SevDeskQuery {
     private final static String sevdesk_api_url = "https://my.sevdesk.de/api/v1";
 
     public static JSONObject query(String queryParam, JSONObject body, QueryMethod method) {
+
+        Main.addToLog("Querying SevDesk API with query: " + queryParam);
+
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest.Builder build = HttpRequest.newBuilder()
                     .uri(URI.create(sevdesk_api_url + queryParam))
@@ -31,6 +34,7 @@ public class SevDeskQuery {
 
             HttpRequest request = build.build();
             HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            Main.addToLog("Response: " + new String(response.body()));
             return new JSONObject((new String(response.body()).startsWith("{") ? new String(response.body()) : "{}"));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.sevdesk.impl.builder;
 
+import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.sevdesk.SevDesk;
 import de.kabuecher.storage.v4.sevdesk.impl.Contact;
 import de.kabuecher.storage.v4.sevdesk.impl.Part;
@@ -14,6 +15,9 @@ import java.util.Date;
 public class InvoiceBuilder {
 
     public Invoice buildInvoice(JSONObject invoice) {
+
+        Main.addToLog("Building invoice from JSON object: " + invoice.toString());
+
         return new Invoice() {
             @Override
             public String getId() {

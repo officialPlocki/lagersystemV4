@@ -7,13 +7,12 @@ package de.kabuecher.storage.v4.client.panels.contentBodys.desktop;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.component.SummarizingBodyCartComponent;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.component.SummarizingBodyOrderComponent;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
-import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ItemObject;
+import de.kabuecher.storage.v4.client.utils.Translateables;
 import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class SummarizingBody extends BodyType {
     /**
      * Creates new form LoginBody
      */
-    public SummarizingBody(JSONObject units) {
+    public SummarizingBody(JSONObject units, boolean compress, boolean disableComponentButtons) {
         initComponents();
 
         addLabel("action_label", action_label);
@@ -37,24 +36,105 @@ public class SummarizingBody extends BodyType {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Arrange components vertically
 
-        System.out.println(units);
-        for (String unit : units.keySet()) {
-            JSONObject unitObject = units.getJSONObject(unit);
-            for (String stack : unitObject.getJSONObject("stacks").keySet()) {
-                JSONObject stackObject = unitObject.getJSONObject("stacks").getJSONObject(stack);
-                for (String box : stackObject.keySet()) {
-                    System.out.println(box);
-                    JSONObject boxObject = stackObject.getJSONObject(box);
-                    for (String ean : boxObject.keySet()) {
-                        JSONObject informational = new JSONObject();
-                        informational.put("unit", unit);
-                        informational.put("stack", stack);
-                        informational.put("box", box);
+        //if compress true, show only a single component for each ean (add up all amounts)
+        if(compress) {
+            HashMap<String, ItemObject> items = new HashMap<>();
+            for (String unit : units.keySet()) {
+                JSONObject unitObject = units.getJSONObject(unit);
+                for (String stack : unitObject.getJSONObject("stacks").keySet()) {
+                    JSONObject stackObject = unitObject.getJSONObject("stacks").getJSONObject(stack);
+                    for (String box : stackObject.keySet()) {
+                        JSONObject boxObject = stackObject.getJSONObject(box);
+                        for (String ean : boxObject.keySet()) {
+                            if(items.containsKey(ean)) {
+                                items.put(ean, new ItemObject() {
+                                    @Override
+                                    public String getName() {
+                                        return new Translateables().getNameByEAN(ean);
+                                    }
 
-                        SummarizingBodyCartComponent component = new SummarizingBodyCartComponent(informational, ean, boxObject.getInt(ean));
+                                    @Override
+                                    public String getEAN() {
+                                        return ean;
+                                    }
 
-                        panel.add(component);
-                        addComponent(ean, component);
+                                    @Override
+                                    public String getPartID() {
+                                        return new Translateables().getPartIDByEAN(ean);
+                                    }
+
+                                    @Override
+                                    public int amount() {
+                                        return items.get(ean).amount() + boxObject.getInt(ean);
+                                    }
+
+                                    @Override
+                                    public JSONObject storageUnit() {
+                                        return items.get(ean).storageUnit();
+                                    }
+                                });
+                            } else {
+                                items.put(ean, new ItemObject() {
+                                    @Override
+                                    public String getName() {
+                                        return new Translateables().getNameByEAN(ean);
+                                    }
+
+                                    @Override
+                                    public String getEAN() {
+                                        return ean;
+                                    }
+
+                                    @Override
+                                    public String getPartID() {
+                                        return new Translateables().getPartIDByEAN(ean);
+                                    }
+
+                                    @Override
+                                    public int amount() {
+                                        return boxObject.getInt(ean);
+                                    }
+
+                                    @Override
+                                    public JSONObject storageUnit() {
+                                        return new JSONObject();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (ItemObject item : items.values()) {
+                SummarizingBodyCartComponent component = new SummarizingBodyCartComponent(null, item.getName(), item.amount());
+
+                if(disableComponentButtons) {
+                    component.getButton("delete_button").setEnabled(false);
+                    component.getButton("change_button").setEnabled(false);
+                }
+
+                panel.add(component);
+                addComponent(item.getEAN(), component);
+            }
+        } else {
+            for (String unit : units.keySet()) {
+                JSONObject unitObject = units.getJSONObject(unit);
+                for (String stack : unitObject.getJSONObject("stacks").keySet()) {
+                    JSONObject stackObject = unitObject.getJSONObject("stacks").getJSONObject(stack);
+                    for (String box : stackObject.keySet()) {
+                        JSONObject boxObject = stackObject.getJSONObject(box);
+                        for (String ean : boxObject.keySet()) {
+                            JSONObject informational = new JSONObject();
+                            informational.put("unit", unit);
+                            informational.put("stack", stack);
+                            informational.put("box", box);
+
+                            SummarizingBodyCartComponent component = new SummarizingBodyCartComponent(informational, ean, boxObject.getInt(ean));
+
+                            panel.add(component);
+                            addComponent(ean, component);
+                        }
                     }
                 }
             }

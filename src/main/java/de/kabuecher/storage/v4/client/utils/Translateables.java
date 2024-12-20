@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.client.utils;
 
+import de.kabuecher.storage.v4.Main;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,6 +16,18 @@ public class Translateables {
     private Instant lastFetchTime;
     private static final URI PARTS_URI = URI.create("https://github.com/officialPlocki/lagersystemV4/raw/refs/heads/main/latest/parts.json");
 
+    public String getEANByName(String name) {
+        JSONObject partFile = getPartFile();
+        JSONObject parts = partFile.getJSONObject("parts");
+        for (String key : parts.keySet()) {
+            JSONObject part = parts.getJSONObject(key);
+            if (part.getString("name").equals(name)) {
+                return part.getString("ean");
+            }
+        }
+        return "unknown";
+    }
+
     public String getNameByEAN(String ean) {
         JSONObject partFile = getPartFile();
         JSONObject parts = partFile.getJSONObject("parts");
@@ -22,6 +35,18 @@ public class Translateables {
             JSONObject part = parts.getJSONObject(key);
             if (part.getString("ean").equals(ean)) {
                 return part.getString("name");
+            }
+        }
+        return "unknown";
+    }
+
+    public String getPartIDByName(String name) {
+        JSONObject partFile = getPartFile();
+        JSONObject parts = partFile.getJSONObject("parts");
+        for (String key : parts.keySet()) {
+            JSONObject part = parts.getJSONObject(key);
+            if (part.getString("name").equals(name)) {
+                return key;
             }
         }
         return "unknown";
@@ -88,6 +113,9 @@ public class Translateables {
     }
 
     public synchronized JSONObject getPartFile() {
+
+        Main.addToLog("Fetching part file...");
+
         if (cachedPartFile != null && lastFetchTime != null) {
             Instant now = Instant.now();
             if (now.isBefore(lastFetchTime.plusSeconds(15 * 60))) {

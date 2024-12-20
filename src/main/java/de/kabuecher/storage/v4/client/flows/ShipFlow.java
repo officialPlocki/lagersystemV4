@@ -24,6 +24,9 @@ public class ShipFlow {
     private final ScanBody scanBody;
 
     public ShipFlow() {
+
+        Main.addToLog("Starting ship flow");
+
         scanBody = new ScanBody();
         scanBody.getLabel("arg_label").setText("Liefercode");
 
@@ -48,7 +51,13 @@ public class ShipFlow {
     }
 
     public void analyzeScan(String text) {
+
+        Main.addToLog("Analyzing scan: " + text);
+
         if(text.startsWith("LEF")) {
+
+            Main.addToLog("Scan is a delivery code");
+
             String offerNo = text.replaceFirst("LEF", "");
             Offer offer = new SevDesk().getOffer(offerNo);
             if(offer != null) {
@@ -89,34 +98,45 @@ public class ShipFlow {
                 });
 
                 Main.bodyHandler.setContentBody(shipBody);
+
+                Main.addToLog("Offer found: " + offerNo);
             } else {
+                Main.addToLog("Offer not found: " + offerNo);
+
                 scanBody.getActionLabel().setText("Liefercode nicht gefunden");
                 scanBody.getTextField("scanTextfield").setText("");
             }
         } else {
+            Main.addToLog("Scan is not a delivery code");
+
             scanBody.getActionLabel().setText("Gescannter Code ist kein Liefercode");
             scanBody.getTextField("scanTextfield").setText("");
         }
     }
 
     private void moreButtonClicked(Offer offer, String weight) {
+        Main.addToLog("More button clicked");
         SendCloud sendCloud = new SendCloud();
-        File label = sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 6);
+        File label = new File("") /*sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 6)*/;
 
         printLabel(label);
 
         Main.bodyHandler.setContentBody(null);
+        Main.addToLog("Label printed");
     }
 
     private void lessButtonClicked(Offer offer, String weight) {
+        Main.addToLog("Less button clicked");
         SendCloud sendCloud = new SendCloud();
-        File label = sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 4);
+        File label = new File("") /*sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 4)*/;
 
         printLabel(label);
         Main.bodyHandler.setContentBody(null);
+        Main.addToLog("Label printed");
     }
 
     private void printLabel(File file) {
+        Main.addToLog("Printing label");
         try {
             PDDocument document = PDDocument.load(file);
             PrinterJob job = PrinterJob.getPrinterJob();
@@ -141,6 +161,8 @@ public class ShipFlow {
         } catch (IOException | PrinterException e) {
             throw new RuntimeException(e);
         }
+
+        Main.addToLog("Label printed");
     }
 
 }

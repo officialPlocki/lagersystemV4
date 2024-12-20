@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.sevdesk.impl.builder;
 
+import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.sevdesk.SevDesk;
 import de.kabuecher.storage.v4.sevdesk.impl.Contact;
 import de.kabuecher.storage.v4.sevdesk.impl.SevClient;
@@ -10,6 +11,8 @@ import java.time.ZonedDateTime;
 public class ContactBuilder {
 
     public Contact buildContact(JSONObject contact) {
+
+        Main.addToLog("Building contact from JSON object: " + contact.toString());
 
         return new Contact() {
             @Override

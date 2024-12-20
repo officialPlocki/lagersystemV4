@@ -13,7 +13,9 @@ import java.net.http.HttpResponse;
 
 public class SendCloud {
 
-    public File getParcelLabel(Offer offer, double weight, int height) {
+    public JSONObject getParcelLabel(Offer offer, double weight, int height) {
+
+        Main.addToLog("Getting parcel label for offer " + offer.getId());
         String fullAddress = offer.getAddress();
 
         String[] lines = fullAddress.split("\n");
@@ -59,10 +61,11 @@ public class SendCloud {
                 .POST(HttpRequest.BodyPublishers.ofString(object.toString()))
                 .build();
 
+        Main.addToLog("Requesting parcel label from SendCloud");
+
         try {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            //return new JSONObject(response.body()).toString();
-            return new File("");
+            return new JSONObject(response.body());
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

@@ -13,11 +13,13 @@ import de.kabuecher.storage.v4.sevdesk.impl.invoice.Invoice;
 import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
 import de.kabuecher.storage.v4.sevdesk.impl.offer.OfferPos;
 import de.kabuecher.storage.v4.storage.UnitManagement;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,15 +30,22 @@ public class PackOrderFlow {
     private SummarizingBody mainBody;
     private Offer currentOffer;
 
+    private int index = 0;
+    private final List<String> keys = new ArrayList<>();
+    private int subIndex = 0;
+    private int positionIndex = 0;
+    private final HashMap<String, JSONArray> subs = new HashMap<>();
+
+    private String ean = "";
+    private final JSONObject units = new JSONObject();
+    private boolean end = false;
+
     public PackOrderFlow(Offer offer) {
         submitOrder(offer);
     }
 
-    int positionIndex = 0;
-    int positionIndexSub = 0;
-    private final HashMap<String, HashMap<String, Integer>> findingAmounts = new HashMap<>();
-
     private void submitOrder(Offer offer) {
+        Main.addToLog("Submitting order: " + offer.getId());
         SevDesk sevDesk = new SevDesk();
         currentOffer = offer;
 
@@ -49,46 +58,18 @@ public class PackOrderFlow {
                     return;
                 }
                 for(String key : object.keySet()) {
-                    findingAmounts.put(new Translateables().getEANByPartID(pos.getPart().getId()), new HashMap<>());
-                    findingAmounts.get(new Translateables().getEANByPartID(pos.getPart().getId())).put(key, object.getInt(key));
+                    if(!keys.contains(pos.getPart().getId())) {
+                        keys.add(pos.getPart().getId());
+                    }
+                    subs.put(pos.getPart().getId(), subs.getOrDefault(pos.getPart().getId(), new JSONArray()).put(new JSONObject().put(key, object.getInt(key))));
+                    Main.addToLog("Added " + object.getInt(key) + " units of " + pos.getPart().getId() + " to order");
                 }
             }
         }
-
-
-        eanScanBody = new ScanBody();
-        eanScanBody.getLabel("arg_label").setText(new Translateables().getEANByPartID(String.valueOf(findingAmounts.keySet().toArray()[positionIndex])));
-        eanScanBody.addAction("enter", new BodyType.ActionEventRunnable() {
-            @Override
-            public void handleActionEvent(ActionEvent event) {}
-
-            @Override
-            public void handleKeyEvent(KeyEvent event) {
-                int keyCode = event.getKeyCode();
-                System.out.println("triggered");
-
-                if(keyCode == KeyEvent.VK_ENTER) {
-                    analyzeEANEnterEvent(eanScanBody.getTextField("scanTextfield"), eanScanBody.getActionLabel(), eanScanBody.getLabel("arg_label"));
-                }
-            }
-
-            @Override
-            public void run() {}
-        });
-        eanScanBody.getActionLabel().setText("Masseneinbuchung in versch. Kisten = Kein Edit");
-
-        Main.bodyHandler.setContentBody(eanScanBody);
-        if(findingAmounts.get(findingAmounts.keySet().toArray()[positionIndex]).size() > (positionIndexSub+1)) {
-            positionIndexSub = 1;
-        } else {
-            positionIndex++;
-            positionIndexSub = 0;
-        }
-
 
         boxScanBody = new ScanBody();
         boxScanBody.getActionLabel().setText("Masseneinbuchung in versch. Kisten = Kein Edit");
-        boxScanBody.getLabel("arg_label").setText(findingAmounts.get(findingAmounts.keySet().toArray()[positionIndex]).keySet().toArray()[positionIndexSub].toString());
+        boxScanBody.getLabel("arg_label").setText(subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString());
         boxScanBody.addAction("enter", new BodyType.ActionEventRunnable() {
             @Override
             public void handleActionEvent(ActionEvent event) {}
@@ -105,36 +86,28 @@ public class PackOrderFlow {
             @Override
             public void run() {}
         });
+
+        Main.bodyHandler.setContentBody(boxScanBody);
     }
 
-    private String ean = "";
+    private void analyzeBOXEnterEvent(JTextField scanTextfield, JLabel actionLabel, JLabel arg_label) {
+        Main.addToLog("Analyzing BOX enter event");
+        String enteredBox = scanTextfield.getText();
+        String expectedBox = arg_label.getText();
 
-    private void analyzeEANEnterEvent(JTextField scanTextfield, JLabel actionLabel, JLabel arg_label) {
-
-        if(scanTextfield.getText().equalsIgnoreCase(arg_label.getText())) {
-            this.ean = scanTextfield.getText();
-
-            Main.bodyHandler.setContentBody(boxScanBody);
-
-            if(findingAmounts.get(findingAmounts.keySet().toArray()[positionIndex]).size() > (positionIndexSub+1)) {
-                positionIndexSub = 1;
-            } else {
-                positionIndex++;
-                positionIndexSub = 0;
-            }
-
+        if (enteredBox.equalsIgnoreCase(expectedBox)) {
+            actionLabel.setText("BOX recognized: " + enteredBox);
             eanScanBody = new ScanBody();
-            eanScanBody.getLabel("arg_label").setText(findingAmounts.get(findingAmounts.keySet().toArray()[positionIndex]).keySet().toArray()[positionIndexSub].toString());
+
+            eanScanBody.getLabel("arg_label").setText(new Translateables().getNameByPartID(keys.get(index)));
+            eanScanBody.getLabel("amount_label").setText("Anzahl: " + subs.get(keys.get(index)).getJSONObject(subIndex).getInt(subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString()));
             eanScanBody.addAction("enter", new BodyType.ActionEventRunnable() {
                 @Override
                 public void handleActionEvent(ActionEvent event) {}
 
                 @Override
                 public void handleKeyEvent(KeyEvent event) {
-                    int keyCode = event.getKeyCode();
-                    System.out.println("triggered");
-
-                    if(keyCode == KeyEvent.VK_ENTER) {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                         analyzeEANEnterEvent(eanScanBody.getTextField("scanTextfield"), eanScanBody.getActionLabel(), eanScanBody.getLabel("arg_label"));
                     }
                 }
@@ -142,59 +115,127 @@ public class PackOrderFlow {
                 @Override
                 public void run() {}
             });
-        } else if(scanTextfield.getText().equalsIgnoreCase("00")) {
-            SummarizingBody summarizingBody = new SummarizingBody(units);
 
-            summarizingBody.getTypeComponents().forEach((key, value) -> {
-                value.getButton("change_button").setEnabled(false);
-                value.getButton("delete_button").setEnabled(false);
-            });
-
-            summarizingBody.addAction("confirm_button", new BodyType.ActionEventRunnable() {
-                @Override
-                public void handleActionEvent(ActionEvent event) {
-                    confirmOrder();
-                }
-
-                @Override
-                public void handleKeyEvent(KeyEvent event) {
-
-                }
-
-                @Override
-                public void run() {
-
-                }
-            });
-
-            summarizingBody.addAction("cancel_button", new BodyType.ActionEventRunnable() {
-                @Override
-                public void handleActionEvent(ActionEvent event) {
-                    Main.bodyHandler.setContentBody(null);
-                }
-
-                @Override
-                public void handleKeyEvent(KeyEvent event) {
-
-                }
-
-                @Override
-                public void run() {
-
-                }
-            });
-
-            Main.bodyHandler.setContentBody(summarizingBody);
+            Main.bodyHandler.setContentBody(eanScanBody);
         } else {
-            actionLabel.setText("EAN nicht erkannt");
+            actionLabel.setText("BOX not recognized");
             scanTextfield.setText("");
         }
+    }
 
+    private void analyzeEANEnterEvent(JTextField scanTextfield, JLabel actionLabel, JLabel arg_label) {
+        Main.addToLog("Analyzing EAN enter event");
+        String enteredEAN = scanTextfield.getText();
+        String expectedEAN = new Translateables().getEANByName(arg_label.getText());
 
+        if (enteredEAN.equalsIgnoreCase(expectedEAN)) {
+            ean = enteredEAN;
+            actionLabel.setText("EAN recognized: " + enteredEAN);
+
+            JSONObject stack = units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A");
+            String boxKey = subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString();
+
+            if (!stack.has(boxKey)) {
+                stack.put(boxKey, new JSONObject());
+            }
+
+            JSONObject box = stack.getJSONObject(boxKey);
+
+            int additionalAmount = subs.get(keys.get(index)).getJSONObject(subIndex).getInt(boxKey);
+            int currentAmount = box.optInt(ean, 0);
+            box.put(ean, currentAmount + additionalAmount);
+
+            // Update indices
+            updateIndices();
+
+            if (!end) {
+                boxScanBody = new ScanBody();
+                boxScanBody.getLabel("arg_label").setText(subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString());
+                boxScanBody.addAction("enter", new BodyType.ActionEventRunnable() {
+                    @Override
+                    public void handleActionEvent(ActionEvent event) {}
+
+                    @Override
+                    public void handleKeyEvent(KeyEvent event) {
+                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                            analyzeBOXEnterEvent(boxScanBody.getTextField("scanTextfield"), boxScanBody.getActionLabel(), boxScanBody.getLabel("arg_label"));
+                        }
+                    }
+
+                    @Override
+                    public void run() {}
+                });
+
+                Main.bodyHandler.setContentBody(boxScanBody);
+            } else {
+                displaySummary();
+            }
+        } else {
+            actionLabel.setText("EAN not recognized: " + enteredEAN);
+            scanTextfield.setText("");
+        }
+    }
+
+    private void updateIndices() {
+        Main.addToLog("Updating indices");
+        if (subIndex < subs.get(keys.get(index)).length() - 1) {
+            subIndex++;
+        } else {
+            if (positionIndex < subs.get(keys.get(index)).getJSONObject(subIndex).keySet().size() - 1) {
+                positionIndex++;
+            } else {
+                if (index < keys.size() - 1) {
+                    index++;
+                    subIndex = 0;
+                    positionIndex = 0;
+                } else {
+                    end = true;
+                }
+            }
+        }
+    }
+
+    private void displaySummary() {
+        Main.addToLog("Displaying summary");
+        SummarizingBody summarizingBody = new SummarizingBody(units, true, true);
+
+        summarizingBody.getTypeComponents().forEach((key, value) -> {
+            value.getButton("change_button").setEnabled(false);
+            value.getButton("delete_button").setEnabled(false);
+        });
+
+        summarizingBody.addAction("confirm_button", new BodyType.ActionEventRunnable() {
+            @Override
+            public void handleActionEvent(ActionEvent event) {
+                confirmOrder();
+            }
+
+            @Override
+            public void handleKeyEvent(KeyEvent event) {}
+
+            @Override
+            public void run() {}
+        });
+
+        summarizingBody.addAction("cancel_button", new BodyType.ActionEventRunnable() {
+            @Override
+            public void handleActionEvent(ActionEvent event) {
+                Main.bodyHandler.setContentBody(null);
+            }
+
+            @Override
+            public void handleKeyEvent(KeyEvent event) {}
+
+            @Override
+            public void run() {}
+        });
+
+        Main.bodyHandler.setContentBody(summarizingBody);
+        Main.addToLog("Summary displayed");
     }
 
     private void confirmOrder() {
-
+        Main.addToLog("Confirming order");
         UnitManagement management = new UnitManagement();
 
         for (String key : units.keySet()) {
@@ -240,19 +281,17 @@ public class PackOrderFlow {
             }
 
             @Override
-            public void handleKeyEvent(KeyEvent event) {
-
-            }
+            public void handleKeyEvent(KeyEvent event) {}
 
             @Override
-            public void run() {
-
-            }
+            public void run() {}
         });
         Main.bodyHandler.setContentBody(changeAddressBody);
+        Main.addToLog("Order confirmed");
     }
 
     private void finalizeOrder(Offer offer, BodyType bodyType) throws Exception {
+        Main.addToLog("Finalizing order");
         SevDesk sevDesk = new SevDesk();
         Offer deliveryNote = sevDesk.createDeliveryNote(offer.getId());
         Invoice invoice = sevDesk.createInvoice(deliveryNote.getId());
@@ -279,49 +318,6 @@ public class PackOrderFlow {
         new DeliveryLabelPrinter().generateLabel(object, deliveryNote.getOrderNumber(), "LEF" + deliveryNote.getOrderNumber());
 
         Main.bodyHandler.setContentBody(null);
+        Main.addToLog("Order finalized");
     }
-
-    private final JSONObject units = new JSONObject();
-
-    private void analyzeBOXEnterEvent(JTextField scanTextfield, JLabel actionLabel, JLabel arg_label) {
-
-        if(scanTextfield.getText().equalsIgnoreCase(arg_label.getText())) {
-
-            JSONObject stack = units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A");
-            if(stack.has(arg_label.getText())) {
-                JSONObject box = stack.getJSONObject(arg_label.getText());
-                if(box.has(ean)) {
-                    box.put(ean, box.getInt(ean)+1);
-                } else {
-                    box.put(ean, 1);
-                }
-            }
-
-            Main.bodyHandler.setContentBody(eanScanBody);
-
-            boxScanBody = new ScanBody();
-            boxScanBody.getLabel("arg_label").setText(findingAmounts.get(findingAmounts.keySet().toArray()[positionIndex]).keySet().toArray()[positionIndexSub].toString());
-            boxScanBody.addAction("enter", new BodyType.ActionEventRunnable() {
-                @Override
-                public void handleActionEvent(ActionEvent event) {}
-
-                @Override
-                public void handleKeyEvent(KeyEvent event) {
-                    int keyCode = event.getKeyCode();
-
-                    if(keyCode == KeyEvent.VK_ENTER) {
-                        analyzeBOXEnterEvent(boxScanBody.getTextField("scanTextfield"), boxScanBody.getActionLabel(), boxScanBody.getLabel("arg_label"));
-                    }
-                }
-
-                @Override
-                public void run() {}
-            });
-        } else {
-            actionLabel.setText("BOX nicht erkannt");
-            scanTextfield.setText("");
-        }
-
-    }
-
 }

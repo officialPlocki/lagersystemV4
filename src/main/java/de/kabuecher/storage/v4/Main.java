@@ -5,28 +5,53 @@ import co.plocki.json.JSONValue;
 import de.kabuecher.storage.v4.client.desktop.DesktopContentBodyHandler;
 import de.kabuecher.storage.v4.client.desktop.DisplayDriver;
 import de.kabuecher.storage.v4.client.panels.DesktopSetupFrame;
+import de.kabuecher.storage.v4.sendcloud.SendCloud;
+import de.kabuecher.storage.v4.sevdesk.SevDesk;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 public class Main {
 
+    private static File logFile;
     private static JSONFile jsonFile;
     public static String sevdesk_api_token;
     public static DisplayDriver displayDriver;
     public static DesktopContentBodyHandler bodyHandler;
 
+    public static void addToLog(String action) {
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(logFile, true);
+            writer.write(ZonedDateTime.now() + ": " + action + "\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static JSONFile getJsonFile() {
         return jsonFile;
     }
 
     public static void main(String[] args) throws Exception {
+
+        logFile = new File("./.kabuecher/log/" + System.currentTimeMillis() + ".log");
+        if(!logFile.exists()) {
+            logFile.getParentFile().mkdirs();
+            logFile.createNewFile();
+        }
+        addToLog("Starting application");
 
         boolean f = false;
 
@@ -39,43 +64,34 @@ public class Main {
         }
 
         if(!f) {
-            // Create a JFrame for the popup
             JFrame frame = new JFrame("Install Font");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(300, 150);
             frame.setLayout(new BorderLayout());
-            frame.setLocationRelativeTo(null); // Center the frame on screen
+            frame.setLocationRelativeTo(null);
 
-            // Add a message label
             JLabel messageLabel = new JLabel("Eine benötigte Font ist nicht installiert: OSWALD", SwingConstants.CENTER);
             frame.add(messageLabel, BorderLayout.CENTER);
 
-            // Add a button to open the link
             JButton installButton = new JButton("Font herunterladen");
             frame.add(installButton, BorderLayout.SOUTH);
 
-            // Define the link to the font
             String fontLink = "https://fonts.google.com/share?selection.family=Oswald";
 
-            // Add an action listener to the button
-            installButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        Desktop desktop = Desktop.getDesktop();
-                        if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                            desktop.browse(new URI(fontLink));
-                        } else {
-                            JOptionPane.showMessageDialog(frame, "Unable to open the link.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(frame, "Error opening link: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            installButton.addActionListener(_ -> {
+                try {
+                    Desktop desktop = Desktop.getDesktop();
+                    if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                        desktop.browse(new URI(fontLink));
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Unable to open the link.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Error opening link: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
 
-            // Make the frame visible
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -97,7 +113,6 @@ public class Main {
                 new JSONValue() {
                     @Override
                     public JSONObject object() {
-                        //label printer & normal printer
                         return new JSONObject("{\"printer\":\"\", \"label_printer\":\"\"}");
                     }
 
@@ -109,7 +124,6 @@ public class Main {
                 new JSONValue() {
                     @Override
                     public JSONObject object() {
-                        //label printer & normal printer
                         return new JSONObject("{\"api_key\":\"\"}");
                     }
 
@@ -121,7 +135,6 @@ public class Main {
                 new JSONValue() {
                     @Override
                     public JSONObject object() {
-                        //label printer & normal printer
                         return new JSONObject("{\"mode\":\"client\"}");
                     }
 
@@ -137,6 +150,8 @@ public class Main {
             new DesktopSetupFrame();
         }
         sevdesk_api_token = jsonFile.get("sevdesk_api_token").getString("value");
+
+        System.out.println(new SendCloud().getParcelLabel(new SevDesk().getOffer(new SevDesk().getOfferID("A2024120184")), 1002, 10));
 
         String mode = jsonFile.get("config").getString("mode");
 

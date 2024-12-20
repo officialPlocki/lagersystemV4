@@ -18,7 +18,10 @@ public class DesktopSetupFrame extends JFrame {
     private JButton saveButton;
     private JFrame frame;
 
-    public DesktopSetupFrame() throws IOException {
+    public DesktopSetupFrame() {
+
+        Main.addToLog("Starting desktop setup frame");
+
         frame = this;
         setTitle("Printer Selection");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,6 +51,8 @@ public class DesktopSetupFrame extends JFrame {
         add(saveButton);
 
         setVisible(true);
+
+        Main.addToLog("Desktop setup frame started");
     }
 
     private class SaveButtonListener implements ActionListener {

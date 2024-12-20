@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.sevdesk.impl.builder;
 
+import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.sevdesk.impl.Part;
 import de.kabuecher.storage.v4.sevdesk.impl.SevClient;
 import org.json.JSONObject;
@@ -9,6 +10,9 @@ import java.time.ZonedDateTime;
 public class PartBuilder {
 
     public Part buildPart(JSONObject part) {
+
+        Main.addToLog("Building part from JSON object: " + part.toString());
+
         return new Part() {
             @Override
             public String getId() {

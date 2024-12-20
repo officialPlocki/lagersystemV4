@@ -1,5 +1,6 @@
 package de.kabuecher.storage.v4.sevdesk.impl.builder;
 
+import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.sevdesk.SevDesk;
 import de.kabuecher.storage.v4.sevdesk.impl.Contact;
 import de.kabuecher.storage.v4.sevdesk.impl.Part;
@@ -13,6 +14,9 @@ import java.time.ZonedDateTime;
 public class OfferBuilder {
  
     public Offer buildOffer(JSONObject offer) {
+
+        Main.addToLog("Building offer from JSON object: " + offer.toString());
+
         return new Offer() {
             @Override
             public String getId() {

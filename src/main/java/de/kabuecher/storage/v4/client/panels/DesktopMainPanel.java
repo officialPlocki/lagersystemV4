@@ -31,7 +31,6 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.*;
@@ -55,15 +54,20 @@ public class DesktopMainPanel extends javax.swing.JPanel {
      * Creates new form MainPanel
      */
     public DesktopMainPanel(JFrame frame) {
+
+        Main.addToLog("Starting main panel");
+
         initComponents();
         this.frame = frame;
 
         bodyHandler = new DesktopContentBodyHandler(frame, contentBody);
-
+        login_logout_button.setEnabled(false);
 
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if(event instanceof KeyEvent keyEvent) {
                 if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F9) {
+
+                    Main.addToLog("F9 pressed");
 
 
                     String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -159,6 +163,8 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                     }
 
                     tmp.delete();
+
+                    Main.addToLog("Label printed");
                 }
             }
         }, AWTEvent.KEY_EVENT_MASK);
@@ -424,6 +430,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         if(evt.getID() == KeyEvent.KEY_PRESSED) {
             if(scanField.getText().startsWith("LEF")) {
                 new ShipFlow().analyzeScan(scanField.getText());
+                Main.addToLog("Analyzing scan: " + scanField.getText());
             }
         }
     }//GEN-LAST:event_scanFieldActionPerformed
@@ -431,8 +438,10 @@ public class DesktopMainPanel extends javax.swing.JPanel {
     private void fullscreenToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenToggleActionPerformed
         if(frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            Main.addToLog("Fullscreen disabled");
         } else {
             frame.setExtendedState(JFrame.NORMAL);
+            Main.addToLog("Fullscreen enabled");
         }
     }//GEN-LAST:event_fullscreenToggleActionPerformed
 
