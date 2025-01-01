@@ -75,6 +75,7 @@ public class LoginFlow {
             Main.bodyHandler.setContentBody(null);
 
             Main.displayDriver.getPanel().getLogoutButton().setEnabled(true);
+
         } else {
             body.getLabel("action_label").setText("Ungültige Anmeldedaten oder Konto abgelaufen.");
         }

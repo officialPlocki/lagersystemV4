@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnitManagementClient {
 
@@ -40,6 +42,45 @@ public class UnitManagementClient {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public JSONObject getStoredItems(String username) {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://hub.kabuecher.de/api/v1"))
+                .header("Content-Type", "application/json")
+                .header("username", Main.username)
+                .header("password", Main.passwordHash)
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        new JSONObject()
+                                .put("method", "getStoredItems")
+                                .toString()
+                ))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            JSONObject resp = new JSONObject(response.body());
+
+            List<String> keysToRemove = new ArrayList<>();
+            for (String key : resp.keySet()) {
+                JSONObject item = resp.getJSONObject(key);
+                if (!item.has("stacks")) {
+                    keysToRemove.add(key);
+                }
+            }
+            for (String key : keysToRemove) {
+                resp.remove(key);
+            }
+
+            return resp;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     public JSONObject searchForItemInStore(String storeName, String itemId, int quantity) {

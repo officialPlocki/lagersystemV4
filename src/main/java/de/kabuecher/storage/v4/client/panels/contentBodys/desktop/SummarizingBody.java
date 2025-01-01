@@ -119,6 +119,7 @@ public class SummarizingBody extends BodyType {
             }
         } else {
             for (String unit : units.keySet()) {
+                System.out.println(units);
                 JSONObject unitObject = units.getJSONObject(unit);
                 for (String stack : unitObject.getJSONObject("stacks").keySet()) {
                     JSONObject stackObject = unitObject.getJSONObject("stacks").getJSONObject(stack);

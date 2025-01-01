@@ -33,7 +33,7 @@ public class UnitManagement {
 
         MySQLResponse response = request.execute();
 
-        if(response.rawAll().isEmpty()) {
+        if(response.isEmpty()) {
             return false;
         }
 
@@ -59,7 +59,7 @@ public class UnitManagement {
 
         MySQLResponse response = request.execute();
 
-        if(response.rawAll().isEmpty()) {
+        if(response.isEmpty()) {
             return null;
         }
 
@@ -98,7 +98,7 @@ public class UnitManagement {
 
         MySQLResponse response = request.execute();
 
-        if(response.rawAll().isEmpty()) {
+        if(response.isEmpty()) {
             MySQLInsert insert = new MySQLInsert();
             insert.prepare(fin, storeName, stackName, boxId, itemId, quantity);
             insert.execute();
@@ -117,16 +117,19 @@ public class UnitManagement {
         Main.addToLog("Getting all stored items in store " + storeName + "(" + System.currentTimeMillis() + ")");
 
         MySQLRequest request = new MySQLRequest();
-        request.prepare("*", "storage");
+        request.prepare("storage");
         request.addRequirement("storeName", storeName);
 
         MySQLResponse response = request.execute();
 
-        if(response.rawAll().isEmpty()) {
+        if(response.isEmpty()) {
             return null;
         }
 
         JSONObject result = new JSONObject();
+
+        result.put(storeName, new JSONObject());
+
         for (int i = 0; i < response.rawAll().size(); i++) {
             HashMap<String, String> keyMap = response.rawAll().get(i);
 
@@ -142,25 +145,27 @@ public class UnitManagement {
 
             box.put(keyMap.get("itemId"), keyMap.get("amount"));
 
-            if(!result.getJSONObject(Main.username).has("stacks")) {
-                result.getJSONObject(Main.username).put("stacks", new JSONObject());
+            if(!result.getJSONObject(storeName).has("stacks")) {
+                result.getJSONObject(storeName).put("stacks", new JSONObject());
             }
 
-            if(!result.getJSONObject(Main.username).getJSONObject("stacks").has(keyMap.get("stackName"))) {
-                result.getJSONObject(Main.username).getJSONObject("stacks").put(keyMap.get("stackName"), new JSONObject());
+            if(!result.getJSONObject(storeName).getJSONObject("stacks").has(keyMap.get("stackName"))) {
+                result.getJSONObject(storeName).getJSONObject("stacks").put(keyMap.get("stackName"), new JSONObject());
             }
 
-            if(!result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).has(keyMap.get("boxId"))) {
-                result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).put(keyMap.get("boxId"), new JSONObject());
+            if(!result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).has(keyMap.get("boxId"))) {
+                result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).put(keyMap.get("boxId"), new JSONObject());
             }
 
-            if(!result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).has(keyMap.get("itemId"))) {
-                result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).put(keyMap.get("itemId"), keyMap.get("amount"));
+            if(!result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).has(keyMap.get("itemId"))) {
+                result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).put(keyMap.get("itemId"), keyMap.get("amount"));
             } else {
-                result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).put(keyMap.get("itemId"),
-                        result.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).getInt(keyMap.get("itemId")) + Integer.parseInt(keyMap.get("amount")));
+                result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).put(keyMap.get("itemId"),
+                        result.getJSONObject(storeName).getJSONObject("stacks").getJSONObject(keyMap.get("stackName")).getJSONObject(keyMap.get("boxId")).getInt(keyMap.get("itemId")) + Integer.parseInt(keyMap.get("amount")));
             }
         }
+
+        System.out.println(result);
 
         return result;
     }

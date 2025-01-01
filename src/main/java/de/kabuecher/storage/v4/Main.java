@@ -11,7 +11,6 @@ import de.kabuecher.storage.v4.client.panels.DesktopSetupFrame;
 import de.kabuecher.storage.v4.server.UndertowServer;
 import de.kabuecher.storage.v4.server.console.ConsoleInputHandler;
 import de.kabuecher.storage.v4.server.console.command.UserCommand;
-import org.bouncycastle.crypto.generators.SCrypt;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -21,7 +20,6 @@ import java.io.FileWriter;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Base64;
 
 public class Main {
 

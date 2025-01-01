@@ -9,7 +9,7 @@ import de.kabuecher.storage.v4.client.desktop.DesktopContentBodyHandler;
 import de.kabuecher.storage.v4.client.flows.*;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.SummarizingBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
-import de.kabuecher.storage.v4.server.storage.UnitManagement;
+import de.kabuecher.storage.v4.client.utils.storage.UnitManagementClient;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -348,8 +348,24 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                 new ShipFlow().analyzeScan(scanField.getText());
             } else if(scanField.getText().startsWith("BX")) {
 
-                UnitManagement unitManagement = new UnitManagement();
+                UnitManagementClient unitManagement = new UnitManagementClient();
                 JSONObject object = unitManagement.getStoredItems(Main.username);
+
+                boolean breakOuter = false;
+
+                for (String stack : object.getJSONObject(Main.username).getJSONObject("stacks").keySet()) {
+                    JSONObject stackObject = object.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack);
+                    for (String box : stackObject.keySet()) {
+                        if (box.equals(scanField.getText())) {
+                            object.getJSONObject(Main.username).getJSONObject("stacks").put(stack, new JSONObject().put(box, stackObject.getJSONObject(box)));
+                            breakOuter = true;
+                            break;
+                        }
+                    }
+                    if(breakOuter) {
+                        break;
+                    }
+                }
 
                 SummarizingBody body = new SummarizingBody(object, false, true);
 
@@ -370,25 +386,43 @@ public class DesktopMainPanel extends javax.swing.JPanel {
 
                     }
                 });
+
+                scanField.setText("");
+                bodyHandler.setContentBody(body);
             } else if(scanField.getText().length() == 12 || scanField.getText().length() == 13) {
                 for(int i = 0; i < scanField.getText().length(); i++) {
                     if(!Character.isDigit(scanField.getText().charAt(i))) {
                         scanField.setText("");
                     } else {
-                        UnitManagement unitManagement = new UnitManagement();
-                        JSONObject object = unitManagement.getStoredItems(Main.username);
 
+                        int totalAmount = 0;
+
+                        JSONObject units = new JSONObject().put(Main.username, new JSONObject().put("stacks", new JSONObject()));
+
+                        UnitManagementClient unitManagement = new UnitManagementClient();
+                        JSONObject object = unitManagement.getStoredItems(Main.username);
                         for (String stack : object.getJSONObject(Main.username).getJSONObject("stacks").keySet()) {
                             JSONObject stackObject = object.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack);
                             for (String box : stackObject.keySet()) {
                                 JSONObject boxObject = stackObject.getJSONObject(box);
                                 for (String item : boxObject.keySet()) {
-                                    if (!item.equals(scanField.getText())) {
-                                        object.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack).getJSONObject(box).remove(item);
+                                    if (item.equals(scanField.getText())) {
+                                        if (!units.getJSONObject(Main.username).getJSONObject("stacks").has(stack)) {
+                                            units.getJSONObject(Main.username).getJSONObject("stacks").put(stack, new JSONObject());
+                                        }
+                                        JSONObject stackObj = units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack);
+                                        if (!stackObj.has(box)) {
+                                            stackObj.put(box, new JSONObject());
+                                        }
+                                        JSONObject boxObj = stackObj.getJSONObject(box);
+                                        boxObj.put(item, boxObj.optInt(item, 0) + boxObject.getInt(item));
+                                        totalAmount += boxObject.getInt(item);
                                     }
                                 }
                             }
                         }
+
+                        object = units;
 
                         SummarizingBody body = new SummarizingBody(object, false, true);
 
@@ -409,6 +443,10 @@ public class DesktopMainPanel extends javax.swing.JPanel {
 
                             }
                         });
+
+                        scanField.setText("");
+                        body.getActionLabel().setText("Gesamtmenge: " + totalAmount);
+                        bodyHandler.setContentBody(body);
                     }
                 }
             }
