@@ -7,8 +7,6 @@ package de.kabuecher.storage.v4.client.panels.contentBodys.desktop;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  *

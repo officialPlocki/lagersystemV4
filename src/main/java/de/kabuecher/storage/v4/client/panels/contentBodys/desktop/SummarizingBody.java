@@ -9,7 +9,7 @@ import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.component.Summ
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ItemObject;
 import de.kabuecher.storage.v4.client.utils.Translateables;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
+import de.kabuecher.storage.v4.client.sevdesk.offer.Offer;
 import org.json.JSONObject;
 
 import javax.swing.*;

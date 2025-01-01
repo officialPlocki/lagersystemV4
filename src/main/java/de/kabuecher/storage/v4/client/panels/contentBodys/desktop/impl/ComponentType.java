@@ -9,7 +9,6 @@ import java.util.HashMap;
 public abstract class ComponentType extends JPanel {
 
     private final HashMap<String, Runnable> actionMap = new HashMap<>();
-    private final HashMap<String, JTextField> textFieldMap = new HashMap<>();
     private final HashMap<String, JLabel> labelMap = new HashMap<>();
     private final HashMap<String, JButton> buttonMap = new HashMap<>();
 
@@ -31,39 +30,6 @@ public abstract class ComponentType extends JPanel {
 
     public JButton getButton(String key) {
         return buttonMap.get(key);
-    }
-
-    protected void addTextField(String key, JTextField textField) {
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Key must not be null or empty.");
-        }
-        if (textField == null) {
-            throw new IllegalArgumentException("TextField must not be null.");
-        }
-
-        // Add to the HashMap
-        textFieldMap.put(key, textField);
-
-    }
-
-    protected JTextField getTextField(String key) {
-        return textFieldMap.get(key);
-    }
-
-    protected JLabel getLabel(String key) {
-        return labelMap.get(key);
-    }
-
-    protected void addLabel(String key, JLabel label) {
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Key must not be null or empty.");
-        }
-        if (label == null) {
-            throw new IllegalArgumentException("Label must not be null.");
-        }
-
-        // Add to the HashMap
-        labelMap.put(key, label);
     }
 
     public JLabel getActionLabel() {

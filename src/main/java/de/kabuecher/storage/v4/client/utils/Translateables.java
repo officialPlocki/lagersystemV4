@@ -40,18 +40,6 @@ public class Translateables {
         return "unknown";
     }
 
-    public String getPartIDByName(String name) {
-        JSONObject partFile = getPartFile();
-        JSONObject parts = partFile.getJSONObject("parts");
-        for (String key : parts.keySet()) {
-            JSONObject part = parts.getJSONObject(key);
-            if (part.getString("name").equals(name)) {
-                return key;
-            }
-        }
-        return "unknown";
-    }
-
     public String getPartIDByEAN(String ean) {
         JSONObject partFile = getPartFile();
         JSONObject parts = partFile.getJSONObject("parts");
@@ -62,36 +50,6 @@ public class Translateables {
             }
         }
         return "unknown";
-    }
-
-    public JSONObject getPartByName(String name) {
-        JSONObject partFile = getPartFile();
-        JSONObject parts = partFile.getJSONObject("parts");
-        for (String key : parts.keySet()) {
-            JSONObject part = parts.getJSONObject(key);
-            if (part.getString("name").equals(name)) {
-                return part;
-            }
-        }
-        return null;
-    }
-
-    public JSONObject getPartByEAN(String ean) {
-        JSONObject partFile = getPartFile();
-        JSONObject parts = partFile.getJSONObject("parts");
-        for (String key : parts.keySet()) {
-            JSONObject part = parts.getJSONObject(key);
-            if (part.getString("ean").equals(ean)) {
-                return part;
-            }
-        }
-        return null;
-    }
-
-    public JSONObject getPartByPartID(String partID) {
-        JSONObject partFile = getPartFile();
-        JSONObject parts = partFile.getJSONObject("parts");
-        return parts.optJSONObject(partID, null);
     }
 
     public String getEANByPartID(String partID) {

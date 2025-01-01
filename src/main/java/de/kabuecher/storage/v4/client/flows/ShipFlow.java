@@ -4,26 +4,22 @@ import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.ScanBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.ShipBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
-import de.kabuecher.storage.v4.sendcloud.SendCloud;
-import de.kabuecher.storage.v4.sevdesk.SevDesk;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.printing.PDFPrintable;
-import org.apache.pdfbox.printing.Scaling;
+import de.kabuecher.storage.v4.client.utils.sendcloud.SendCloudClient;
+import de.kabuecher.storage.v4.client.sevdesk.SevDeskClient;
+import de.kabuecher.storage.v4.client.sevdesk.offer.Offer;
 
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.print.*;
-import java.io.File;
-import java.io.IOException;
 
 public class ShipFlow {
 
-    private final ScanBody scanBody;
+    private ScanBody scanBody;
 
     public ShipFlow() {
+
+        if(Main.timeout) {
+            return;
+        }
 
         Main.addToLog("Starting ship flow");
 
@@ -59,7 +55,7 @@ public class ShipFlow {
             Main.addToLog("Scan is a delivery code");
 
             String offerNo = text.replaceFirst("LEF", "");
-            Offer offer = new SevDesk().getOffer(offerNo);
+            Offer offer = new SevDeskClient().getOffer(offerNo);
             if(offer != null) {
 
                 ShipBody shipBody = new ShipBody();
@@ -116,7 +112,7 @@ public class ShipFlow {
 
     private void moreButtonClicked(Offer offer, String weight) {
         Main.addToLog("More button clicked");
-        SendCloud sendCloud = new SendCloud();
+        SendCloudClient sendCloud = new SendCloudClient();
         sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 15);
         Main.bodyHandler.setContentBody(null);
         Main.addToLog("Label printed");
@@ -124,39 +120,9 @@ public class ShipFlow {
 
     private void lessButtonClicked(Offer offer, String weight) {
         Main.addToLog("Less button clicked");
-        SendCloud sendCloud = new SendCloud();
+        SendCloudClient sendCloud = new SendCloudClient();
         sendCloud.getParcelLabel(offer, Double.parseDouble(weight), 5);
         Main.bodyHandler.setContentBody(null);
-        Main.addToLog("Label printed");
-    }
-
-    private void printLabel(File file) {
-        Main.addToLog("Printing label");
-        try {
-            PDDocument document = PDDocument.load(file);
-            PrinterJob job = PrinterJob.getPrinterJob();
-
-            for (PrintService printService : PrintServiceLookup.lookupPrintServices(null, null)) {
-                if(printService.getName().equals(Main.getJsonFile().get("printerConfig").getString("label_printer"))) {
-                    job.setPrintService(printService);
-                    break;
-                }
-            }
-
-            Paper paper = job.defaultPage().getPaper();
-
-            PageFormat format = new PageFormat();
-            format.setPaper(paper);
-
-            Book book = new Book();
-            book.append(new PDFPrintable(document, Scaling.SHRINK_TO_FIT), format, document.getNumberOfPages());
-            job.setPageable(book);
-
-            job.print();
-        } catch (IOException | PrinterException e) {
-            throw new RuntimeException(e);
-        }
-
         Main.addToLog("Label printed");
     }
 

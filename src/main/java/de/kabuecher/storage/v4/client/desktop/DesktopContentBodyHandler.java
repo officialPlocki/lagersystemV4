@@ -46,6 +46,7 @@ public class DesktopContentBodyHandler {
     }
 
     public void setContentBody(BodyType bodyType) {
+
         Dimension size = (Dimension) frame.getSize().clone();
         boolean fullscreen = frame.getExtendedState() == JFrame.MAXIMIZED_BOTH;
 
@@ -66,13 +67,13 @@ public class DesktopContentBodyHandler {
                         String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                         SecureRandom RANDOM = new SecureRandom();
 
-                        StringBuilder sb = new StringBuilder(12);
+                        StringBuilder sb = new StringBuilder(10);
                         for (int i = 0; i < 12; i++) {
                             int index = RANDOM.nextInt(CHARSET.length());
                             sb.append(CHARSET.charAt(index));
                         }
 
-                        String data = sb.toString();
+                        String data = "BX" + sb;
 
                         // Generate QR code
                         QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -158,7 +159,12 @@ public class DesktopContentBodyHandler {
                         tmp.delete();
                     }
                 }
+
+                Main.lastAction = System.currentTimeMillis();
             }, AWTEvent.KEY_EVENT_MASK);
+
+            //listen for any event and set action time
+            Toolkit.getDefaultToolkit().addAWTEventListener(_ -> Main.lastAction = System.currentTimeMillis(), AWTEvent.FOCUS_EVENT_MASK);
         }
 
         contentBody.add(Objects.requireNonNullElseGet(bodyType, JPanel::new));

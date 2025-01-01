@@ -46,6 +46,11 @@ public class LoginBody extends BodyType {
         password_textfield = new javax.swing.JPasswordField();
         username_textfield = new javax.swing.JTextField();
         confirm_button = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         action_label = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(17, 21, 28));
@@ -77,27 +82,59 @@ public class LoginBody extends BodyType {
             }
         });
 
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Alle Informationen die durch diese Applikation übermittelt werden sind SSL verschlüsselt.");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Informationen welche durch diese Applikationen freigegeben werden sind strengst vertraulich und geheimzuhalten.");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Die Weiterverarbeitung zu weiteren Zwecken als die Auftragserfüllung im Vertraglich festgelegten Rahmen ist nicht gestattet.");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Support: admin@kabuecher.de | +49-(0)721-61932199");
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Durch die Verwendung dieser Applikation entstehen Gebühren gemäß des abgeschlossenen \"KA-DIREKT\"-Plattformvertrages.");
+
         javax.swing.GroupLayout overlayPanelLayout = new javax.swing.GroupLayout(overlayPanel);
         overlayPanel.setLayout(overlayPanelLayout);
         overlayPanelLayout.setHorizontalGroup(
             overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overlayPanelLayout.createSequentialGroup()
-                .addContainerGap(309, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(username_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(password_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(overlayPanelLayout.createSequentialGroup()
-                        .addGap(170, 170, 170)
-                        .addComponent(login_title))
+                        .addComponent(jLabel5)
+                        .addContainerGap(224, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overlayPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(overlayPanelLayout.createSequentialGroup()
+                                .addGroup(overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(username_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(password_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(overlayPanelLayout.createSequentialGroup()
+                                        .addGap(118, 118, 118)
+                                        .addComponent(confirm_button, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(262, 262, 262))
+                            .addGroup(overlayPanelLayout.createSequentialGroup()
+                                .addGap(170, 170, 170)
+                                .addComponent(login_title))))
                     .addGroup(overlayPanelLayout.createSequentialGroup()
-                        .addGap(118, 118, 118)
-                        .addComponent(confirm_button, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(308, 308, 308))
+                        .addGroup(overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel4))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         overlayPanelLayout.setVerticalGroup(
             overlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overlayPanelLayout.createSequentialGroup()
-                .addGap(164, 164, 164)
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
                 .addComponent(login_title)
                 .addGap(18, 18, 18)
                 .addComponent(username_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -105,7 +142,15 @@ public class LoginBody extends BodyType {
                 .addComponent(password_textfield, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(confirm_button, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(228, Short.MAX_VALUE))
+                .addGap(127, 127, 127)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addContainerGap())
         );
 
         action_label.setFont(new java.awt.Font("Oswald", 0, 18)); // NOI18N
@@ -122,16 +167,16 @@ public class LoginBody extends BodyType {
                         .addContainerGap()
                         .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
+                        .addGap(125, 125, 125)
                         .addComponent(overlayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(127, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(127, 127, 127)
+                .addGap(122, 122, 122)
                 .addComponent(overlayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                 .addComponent(action_label, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -145,6 +190,11 @@ public class LoginBody extends BodyType {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel action_label;
     private javax.swing.JButton confirm_button;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel login_title;
     private javax.swing.JPanel overlayPanel;
     private javax.swing.JPasswordField password_textfield;

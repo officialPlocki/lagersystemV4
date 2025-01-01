@@ -4,42 +4,17 @@
  */
 package de.kabuecher.storage.v4.client.panels;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.properties.HorizontalAlignment;
-import com.itextpdf.layout.properties.TextAlignment;
 import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.client.desktop.DesktopContentBodyHandler;
-import de.kabuecher.storage.v4.client.flows.IngoingInventoryFlow;
-import de.kabuecher.storage.v4.client.flows.OrderViewFlow;
-import de.kabuecher.storage.v4.client.flows.OutgoingInventoryFlow;
-import de.kabuecher.storage.v4.client.flows.ShipFlow;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.printing.PDFPrintable;
-import org.apache.pdfbox.printing.Scaling;
+import de.kabuecher.storage.v4.client.flows.*;
+import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.SummarizingBody;
+import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
+import de.kabuecher.storage.v4.server.storage.UnitManagement;
+import org.json.JSONObject;
 
-import javax.imageio.ImageIO;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.awt.print.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.security.SecureRandom;
 
 /**
  *
@@ -63,111 +38,15 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         bodyHandler = new DesktopContentBodyHandler(frame, contentBody);
         login_logout_button.setEnabled(false);
 
-        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
-            if(event instanceof KeyEvent keyEvent) {
-                if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F9) {
+        Main.addToLog("Main panel started");
+    }
 
-                    Main.addToLog("F9 pressed");
+    public JButton getLogoutButton() {
+        return login_logout_button;
+    }
 
-
-                    String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                    SecureRandom RANDOM = new SecureRandom();
-
-                    StringBuilder sb = new StringBuilder(12);
-                    for (int i = 0; i < 12; i++) {
-                        int index = RANDOM.nextInt(CHARSET.length());
-                        sb.append(CHARSET.charAt(index));
-                    }
-
-                    String data = "BX"+ sb.substring(3, 12);
-
-                    // Generate QR code
-                    QRCodeWriter qrCodeWriter = new QRCodeWriter();
-                    BitMatrix bitMatrix;
-                    try {
-                        bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
-                    } catch (WriterException e) {
-                        throw new RuntimeException(e);
-                    }
-                    BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
-
-                    File qrCodeFile;
-                    try {
-                        qrCodeFile = File.createTempFile("qrCode", ".png");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        ImageIO.write(qrCodeImage, "PNG", qrCodeFile);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    float widthInches = 4f;
-                    float heightInches = 6f;
-                    float widthPoints = widthInches * 72;
-                    float heightPoints = heightInches * 72;
-
-                    File tmp;
-                    try {
-                        tmp = File.createTempFile("label", ".pdf");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    PdfWriter writer;
-                    try {
-                        writer = new PdfWriter(new FileOutputStream(tmp));
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                    PdfDocument pdfDoc = new PdfDocument(writer);
-                    Document document = new Document(pdfDoc, new com.itextpdf.kernel.geom.PageSize(widthPoints, heightPoints));
-
-                    document.add(new Paragraph(data).setFontSize(14).setTextAlignment(TextAlignment.CENTER));
-
-                    Image qrImage;
-                    try {
-                        qrImage = new Image(com.itextpdf.io.image.ImageDataFactory.create(qrCodeFile.getAbsolutePath()));
-                    } catch (MalformedURLException e) {
-                        throw new RuntimeException(e);
-                    }
-                    qrImage.setAutoScale(true).setWidth(150).setHeight(150).setHorizontalAlignment(HorizontalAlignment.CENTER);
-                    document.add(qrImage);
-
-                    document.close();
-                    qrCodeFile.delete();
-
-                    try {
-                        PDDocument pdf = PDDocument.load(tmp);
-                        PrinterJob job = PrinterJob.getPrinterJob();
-
-                        for (PrintService printService : PrintServiceLookup.lookupPrintServices(null, null)) {
-                            if(printService.getName().equals(Main.getJsonFile().get("printerConfig").getString("label_printer"))) {
-                                job.setPrintService(printService);
-                                break;
-                            }
-                        }
-
-                        Paper paper = job.defaultPage().getPaper();
-
-                        PageFormat format = new PageFormat();
-                        format.setPaper(paper);
-
-                        Book book = new Book();
-                        book.append(new PDFPrintable(pdf, Scaling.SHRINK_TO_FIT), format, pdf.getNumberOfPages());
-                        job.setPageable(book);
-
-                        job.print();
-                    } catch (IOException | PrinterException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    tmp.delete();
-
-                    Main.addToLog("Label printed");
-                }
-            }
-        }, AWTEvent.KEY_EVENT_MASK);
+    public JLabel getTimeLabel() {
+        return timeLabel;
     }
 
     public DesktopContentBodyHandler getBodyHandler() {
@@ -198,6 +77,9 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         ship_button = new javax.swing.JButton();
         versionLabel = new javax.swing.JLabel();
         fullscreenToggle = new javax.swing.JToggleButton();
+        timeLabel = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        versionLabel1 = new javax.swing.JLabel();
         contentBody = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(17, 21, 28));
@@ -243,11 +125,11 @@ public class DesktopMainPanel extends javax.swing.JPanel {
 
         login_logout_button.setBackground(new java.awt.Color(231, 231, 231));
         login_logout_button.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
-        login_logout_button.setText("Anmelden / Abmelden");
+        login_logout_button.setText("Abmelden");
 
         jLabel2.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(231, 231, 231));
-        jLabel2.setText("- EANs (bald)");
+        jLabel2.setText("- EANs");
 
         jLabel3.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(231, 231, 231));
@@ -255,17 +137,17 @@ public class DesktopMainPanel extends javax.swing.JPanel {
 
         jLabel5.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(231, 231, 231));
-        jLabel5.setText("- Boxcodes (bald)");
+        jLabel5.setText("- Boxcodes");
 
         jLabel6.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(231, 231, 231));
-        jLabel6.setText("- Versandcodes");
+        jLabel6.setText("- Liefercodes");
 
         scanField.setFont(new java.awt.Font("Oswald", 0, 36)); // NOI18N
         scanField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        scanField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scanFieldActionPerformed(evt);
+        scanField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                scanFieldKeyPressed(evt);
             }
         });
 
@@ -281,7 +163,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         versionLabel.setFont(new java.awt.Font("Oswald", 0, 12)); // NOI18N
         versionLabel.setForeground(new java.awt.Color(255, 255, 255));
         versionLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        versionLabel.setText("V4.1");
+        versionLabel.setText("Copyright 2024-2025 Karlsruher Bücher - Harald Pflug");
         versionLabel.setToolTipText("");
 
         fullscreenToggle.setText("Vollbild");
@@ -291,6 +173,20 @@ public class DesktopMainPanel extends javax.swing.JPanel {
             }
         });
 
+        timeLabel.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
+        timeLabel.setForeground(new java.awt.Color(231, 231, 231));
+        timeLabel.setText("00:00");
+
+        jLabel7.setFont(new java.awt.Font("Oswald", 0, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(231, 231, 231));
+        jLabel7.setText("Zeit bis Abmeldung:");
+
+        versionLabel1.setFont(new java.awt.Font("Oswald", 0, 12)); // NOI18N
+        versionLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        versionLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        versionLabel1.setText("V4.2");
+        versionLabel1.setToolTipText("");
+
         javax.swing.GroupLayout sideBarLayout = new javax.swing.GroupLayout(sideBar);
         sideBar.setLayout(sideBarLayout);
         sideBarLayout.setHorizontalGroup(
@@ -298,34 +194,38 @@ public class DesktopMainPanel extends javax.swing.JPanel {
             .addGroup(sideBarLayout.createSequentialGroup()
                 .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(sideBarLayout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(title)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(versionLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(sideBarLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(scanField, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(hub_outgoing_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(hub_ingoing_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(orders_button, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                            .addComponent(orders_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(login_logout_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ship_button, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(sideBarLayout.createSequentialGroup()
-                                .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addGroup(sideBarLayout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel2)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel6))))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                            .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel3)
+                                .addGroup(sideBarLayout.createSequentialGroup()
+                                    .addGap(6, 6, 6)
+                                    .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel5)
+                                        .addGroup(sideBarLayout.createSequentialGroup()
+                                            .addComponent(jLabel6)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(fullscreenToggle))))
+                                .addGroup(sideBarLayout.createSequentialGroup()
+                                    .addComponent(jLabel7)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(timeLabel)))))
+                    .addGroup(sideBarLayout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(title)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(versionLabel1)))
                 .addContainerGap())
             .addGroup(sideBarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fullscreenToggle)
+                .addGap(20, 20, 20)
+                .addComponent(versionLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         sideBarLayout.setVerticalGroup(
@@ -334,9 +234,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(sideBarLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(versionLabel)))
+                    .addComponent(versionLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(orders_button, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -345,21 +243,27 @@ public class DesktopMainPanel extends javax.swing.JPanel {
                 .addComponent(hub_outgoing_button, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ship_button, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(timeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(fullscreenToggle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
-                .addGap(37, 37, 37)
+                .addGroup(sideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(fullscreenToggle))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scanField, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addGap(37, 37, 37)
                 .addComponent(login_logout_button, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(versionLabel)
+                .addGap(10, 10, 10))
         );
 
         contentBody.setBackground(new java.awt.Color(17, 21, 28));
@@ -369,7 +273,7 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         contentBody.setLayout(contentBodyLayout);
         contentBodyLayout.setHorizontalGroup(
             contentBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1218, Short.MAX_VALUE)
+            .addGap(0, 1236, Short.MAX_VALUE)
         );
         contentBodyLayout.setVerticalGroup(
             contentBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,15 +330,6 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         new OrderViewFlow();
     }//GEN-LAST:event_orders_buttonActionPerformed
 
-    private void scanFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFieldActionPerformed
-        if(evt.getID() == KeyEvent.KEY_PRESSED) {
-            if(scanField.getText().startsWith("LEF")) {
-                new ShipFlow().analyzeScan(scanField.getText());
-                Main.addToLog("Analyzing scan: " + scanField.getText());
-            }
-        }
-    }//GEN-LAST:event_scanFieldActionPerformed
-
     private void fullscreenToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenToggleActionPerformed
         if(frame.getExtendedState() == JFrame.NORMAL) {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -447,6 +342,79 @@ public class DesktopMainPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_fullscreenToggleActionPerformed
 
+    private void scanFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_scanFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if(scanField.getText().startsWith("LEF")) {
+                new ShipFlow().analyzeScan(scanField.getText());
+            } else if(scanField.getText().startsWith("BX")) {
+
+                UnitManagement unitManagement = new UnitManagement();
+                JSONObject object = unitManagement.getStoredItems(Main.username);
+
+                SummarizingBody body = new SummarizingBody(object, false, true);
+
+                body.getButton("confirm_button").setEnabled(false);
+                body.addAction("cancel_button", new BodyType.ActionEventRunnable() {
+                    @Override
+                    public void handleActionEvent(ActionEvent event) {
+                        bodyHandler.setContentBody(null);
+                    }
+
+                    @Override
+                    public void handleKeyEvent(KeyEvent event) {
+
+                    }
+
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            } else if(scanField.getText().length() == 12 || scanField.getText().length() == 13) {
+                for(int i = 0; i < scanField.getText().length(); i++) {
+                    if(!Character.isDigit(scanField.getText().charAt(i))) {
+                        scanField.setText("");
+                    } else {
+                        UnitManagement unitManagement = new UnitManagement();
+                        JSONObject object = unitManagement.getStoredItems(Main.username);
+
+                        for (String stack : object.getJSONObject(Main.username).getJSONObject("stacks").keySet()) {
+                            JSONObject stackObject = object.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack);
+                            for (String box : stackObject.keySet()) {
+                                JSONObject boxObject = stackObject.getJSONObject(box);
+                                for (String item : boxObject.keySet()) {
+                                    if (!item.equals(scanField.getText())) {
+                                        object.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject(stack).getJSONObject(box).remove(item);
+                                    }
+                                }
+                            }
+                        }
+
+                        SummarizingBody body = new SummarizingBody(object, false, true);
+
+                        body.getButton("confirm_button").setEnabled(false);
+                        body.addAction("cancel_button", new BodyType.ActionEventRunnable() {
+                            @Override
+                            public void handleActionEvent(ActionEvent event) {
+                                bodyHandler.setContentBody(null);
+                            }
+
+                            @Override
+                            public void handleKeyEvent(KeyEvent event) {
+
+                            }
+
+                            @Override
+                            public void run() {
+
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_scanFieldKeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contentBody;
@@ -457,13 +425,16 @@ public class DesktopMainPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JButton login_logout_button;
     private javax.swing.JButton orders_button;
     private javax.swing.JTextField scanField;
     private javax.swing.JButton ship_button;
     private javax.swing.JPanel sideBar;
+    private javax.swing.JLabel timeLabel;
     private javax.swing.JLabel title;
     private javax.swing.JLabel versionLabel;
+    private javax.swing.JLabel versionLabel1;
     // End of variables declaration//GEN-END:variables
 }

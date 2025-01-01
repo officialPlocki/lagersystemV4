@@ -9,11 +9,11 @@ import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
 import de.kabuecher.storage.v4.client.utils.DeliveryLabelPrinter;
 import de.kabuecher.storage.v4.client.utils.Translateables;
-import de.kabuecher.storage.v4.sevdesk.SevDesk;
-import de.kabuecher.storage.v4.sevdesk.impl.invoice.Invoice;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.OfferPos;
-import de.kabuecher.storage.v4.storage.UnitManagement;
+import de.kabuecher.storage.v4.client.sevdesk.SevDeskClient;
+import de.kabuecher.storage.v4.client.sevdesk.invoice.Invoice;
+import de.kabuecher.storage.v4.client.sevdesk.offer.Offer;
+import de.kabuecher.storage.v4.client.sevdesk.offer.OfferPos;
+import de.kabuecher.storage.v4.client.utils.storage.UnitManagementClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,9 +42,14 @@ public class OrderViewFlow {
     private boolean end = false;
 
     public OrderViewFlow() {
+
+        if(Main.timeout) {
+            return;
+        }
+
         Main.addToLog("Starting order view flow");
-        units.put("store1", new JSONObject().put("stacks", new JSONObject().put("A", new JSONObject())));
-        SevDesk sevDesk = new SevDesk();
+        units.put(Main.username, new JSONObject().put("stacks", new JSONObject().put("A", new JSONObject())));
+        SevDeskClient sevDesk = new SevDeskClient();
         List<Offer> offers = sevDesk.getOpenOffers();
         SummarizingBody summarizingBody = new SummarizingBody(offers);
         for (String component : summarizingBody.getTypeComponents().keySet()) {
@@ -76,13 +81,13 @@ public class OrderViewFlow {
         waitingBody.getProgressBar().setValue(1);
 
         Main.addToLog("Submitting order: " + offer.getId());
-        SevDesk sevDesk = new SevDesk();
+        SevDeskClient sevDesk = new SevDeskClient();
         currentOffer = offer;
 
         if(offer != null) {
             List<OfferPos> positions = sevDesk.getOrderPositions(offer.getId());
             for(OfferPos pos : positions) {
-                JSONObject object = new UnitManagement().searchForItemInStore("store1", new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
+                JSONObject object = new UnitManagementClient().searchForItemInStore(Main.username, new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
                 if(object == null) {
                     mainBody.getActionLabel().setText("Nicht genügend Einheiten vorhanden");
                     return;
@@ -166,7 +171,7 @@ public class OrderViewFlow {
             ean = enteredEAN;
             actionLabel.setText("EAN recognized: " + enteredEAN);
 
-            JSONObject stack = units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A");
+            JSONObject stack = units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A");
             String boxKey = subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString();
 
             if (!stack.has(boxKey)) {
@@ -270,7 +275,7 @@ public class OrderViewFlow {
 
     private void confirmOrder() {
         Main.addToLog("Confirming order");
-        UnitManagement management = new UnitManagement();
+        UnitManagementClient management = new UnitManagementClient();
 
         for (String key : units.keySet()) {
             JSONObject store = units.getJSONObject(key);
@@ -285,8 +290,6 @@ public class OrderViewFlow {
                 }
             }
         }
-
-        management.saveChanges();
 
         ChangeAddressBody changeAddressBody = new ChangeAddressBody();
         String address = "";
@@ -328,7 +331,7 @@ public class OrderViewFlow {
         Main.bodyHandler.setContentBody(waitingBody);
 
         waitingBody.getProgressBar().setValue(1);
-        SevDesk sevDesk = new SevDesk();
+        SevDeskClient sevDesk = new SevDeskClient();
         Offer deliveryNote = sevDesk.createDeliveryNote(offer.getId());
         waitingBody.getProgressBar().setValue(2);
         Invoice invoice = sevDesk.createInvoice(offer.getId());

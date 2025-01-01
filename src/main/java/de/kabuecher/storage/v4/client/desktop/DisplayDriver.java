@@ -8,7 +8,12 @@ import java.awt.*;
 public class DisplayDriver {
 
     private final JFrame frame;
+    private final DesktopMainPanel panel;
     private DesktopContentBodyHandler bodyHandler;
+
+    public DesktopMainPanel getPanel() {
+        return panel;
+    }
 
     public DesktopContentBodyHandler getBodyHandler() {
         return bodyHandler;
@@ -19,7 +24,7 @@ public class DisplayDriver {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(1538, 1060));
 
-        DesktopMainPanel panel = new DesktopMainPanel(frame);
+        panel = new DesktopMainPanel(frame);
         bodyHandler = panel.getBodyHandler();
         frame.add(panel);
 

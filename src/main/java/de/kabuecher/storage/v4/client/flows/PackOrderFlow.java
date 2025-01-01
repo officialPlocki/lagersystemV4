@@ -8,11 +8,11 @@ import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.WaitingBody;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 import de.kabuecher.storage.v4.client.utils.DeliveryLabelPrinter;
 import de.kabuecher.storage.v4.client.utils.Translateables;
-import de.kabuecher.storage.v4.sevdesk.SevDesk;
-import de.kabuecher.storage.v4.sevdesk.impl.invoice.Invoice;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.OfferPos;
-import de.kabuecher.storage.v4.storage.UnitManagement;
+import de.kabuecher.storage.v4.client.sevdesk.SevDeskClient;
+import de.kabuecher.storage.v4.client.sevdesk.invoice.Invoice;
+import de.kabuecher.storage.v4.client.sevdesk.offer.Offer;
+import de.kabuecher.storage.v4.client.sevdesk.offer.OfferPos;
+import de.kabuecher.storage.v4.client.utils.storage.UnitManagementClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,7 +27,6 @@ public class PackOrderFlow {
 
     private ScanBody eanScanBody;
     private ScanBody boxScanBody;
-    private SummarizingBody mainBody;
     private Offer currentOffer;
 
     private int index = 0;
@@ -41,6 +40,11 @@ public class PackOrderFlow {
     private boolean end = false;
 
     public PackOrderFlow(Offer offer) {
+
+        if(Main.timeout) {
+            return;
+        }
+
         submitOrder(offer);
     }
 
@@ -51,15 +55,15 @@ public class PackOrderFlow {
         waitingBody.getProgressBar().setValue(1);
 
         Main.addToLog("Submitting order: " + offer.getId());
-        SevDesk sevDesk = new SevDesk();
+        SevDeskClient sevDesk = new SevDeskClient();
         currentOffer = offer;
 
         if(offer != null) {
             List<OfferPos> positions = sevDesk.getOrderPositions(offer.getId());
             for(OfferPos pos : positions) {
-                JSONObject object = new UnitManagement().searchForItemInStore("store1", new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
+                JSONObject object = new UnitManagementClient().searchForItemInStore(Main.username, new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
                 if(object == null) {
-                    mainBody.getActionLabel().setText("Nicht genügend Einheiten vorhanden");
+                    Main.bodyHandler.setContentBody(null);
                     return;
                 }
                 for(String key : object.keySet()) {
@@ -141,7 +145,7 @@ public class PackOrderFlow {
             ean = enteredEAN;
             actionLabel.setText("EAN recognized: " + enteredEAN);
 
-            JSONObject stack = units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A");
+            JSONObject stack = units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A");
             String boxKey = subs.get(keys.get(index)).getJSONObject(subIndex).keySet().toArray()[positionIndex].toString();
 
             if (!stack.has(boxKey)) {
@@ -245,7 +249,7 @@ public class PackOrderFlow {
 
     private void confirmOrder() {
         Main.addToLog("Confirming order");
-        UnitManagement management = new UnitManagement();
+        UnitManagementClient management = new UnitManagementClient();
 
         for (String key : units.keySet()) {
             JSONObject store = units.getJSONObject(key);
@@ -260,8 +264,6 @@ public class PackOrderFlow {
                 }
             }
         }
-
-        management.saveChanges();
 
         ChangeAddressBody changeAddressBody = new ChangeAddressBody();
         String address = "";
@@ -303,7 +305,7 @@ public class PackOrderFlow {
         Main.bodyHandler.setContentBody(waitingBody);
 
         waitingBody.getProgressBar().setValue(1);
-        SevDesk sevDesk = new SevDesk();
+        SevDeskClient sevDesk = new SevDeskClient();
         Offer deliveryNote = sevDesk.createDeliveryNote(offer.getId());
         waitingBody.getProgressBar().setValue(2);
         Invoice invoice = sevDesk.createInvoice(offer.getId());

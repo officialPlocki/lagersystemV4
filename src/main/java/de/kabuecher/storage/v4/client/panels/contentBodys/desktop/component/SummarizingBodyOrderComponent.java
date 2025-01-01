@@ -5,7 +5,7 @@
 package de.kabuecher.storage.v4.client.panels.contentBodys.desktop.component;
 
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
-import de.kabuecher.storage.v4.sevdesk.impl.offer.Offer;
+import de.kabuecher.storage.v4.client.sevdesk.offer.Offer;
 
 /**
  *
@@ -19,7 +19,6 @@ public class SummarizingBodyOrderComponent extends ComponentType {
     public SummarizingBodyOrderComponent(Offer offer) {
         initComponents();
 
-        addLabel("order_number_label", order_number_label);
         order_number_label.setText(offer.getOrderNumber());
     }
 

@@ -7,7 +7,7 @@ import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.SummarizingBod
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.ComponentType;
 import de.kabuecher.storage.v4.client.utils.Translateables;
-import de.kabuecher.storage.v4.storage.UnitManagement;
+import de.kabuecher.storage.v4.client.utils.storage.UnitManagementClient;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -24,9 +24,13 @@ public class OutgoingInventoryFlow {
 
     public OutgoingInventoryFlow() {
 
+        if(Main.timeout) {
+            return;
+        }
+
         Main.addToLog("Starting OutgoingInventoryFlow");
 
-        units.put("store1", new JSONObject().put("stacks", new JSONObject().put("A", new JSONObject())));
+        units.put(Main.username, new JSONObject().put("stacks", new JSONObject().put("A", new JSONObject())));
 
         eanScanBody = new ScanBody();
         eanScanBody.getLabel("arg_label").setText("EAN");
@@ -197,7 +201,7 @@ public class OutgoingInventoryFlow {
 
         Main.addToLog("Handling Confirm");
 
-        UnitManagement management = new UnitManagement();
+        UnitManagementClient management = new UnitManagementClient();
 
         JSONObject changes = new JSONObject();
         boolean totalSuccess = true;
@@ -229,8 +233,6 @@ public class OutgoingInventoryFlow {
             }
         }
 
-        management.saveChanges();
-
         if(totalSuccess) {
             Main.bodyHandler.setContentBody(null);
         }
@@ -242,12 +244,12 @@ public class OutgoingInventoryFlow {
 
         Main.addToLog("Delete Button Action Event");
 
-        if(units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).keySet().size() == 1) {
+        if(units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).keySet().size() == 1) {
             summaryBody.getActionLabel().setText("Artikel nicht löschbar, Buchung sonst leer!");
             return;
         }
 
-        units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).remove(eanI);
+        units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).remove(eanI);
 
 
         boolean diff = false;
@@ -380,7 +382,7 @@ public class OutgoingInventoryFlow {
         } else {
             Main.addToLog("Text is not empty");
             int amount = Integer.parseInt(text);
-            units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).put(ean, amount);
+            units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").getJSONObject(unitInfo.getString("box")).put(ean, amount);
 
 
             boolean diff = false;
@@ -477,8 +479,8 @@ public class OutgoingInventoryFlow {
 
             Main.addToLog("Text starts with BX");
 
-            if(units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").has(text)) {
-                JSONObject content = units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").getJSONObject(text);
+            if(units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").has(text)) {
+                JSONObject content = units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").getJSONObject(text);
                 if(content.has(ean)) {
                     int amount = content.getInt(ean);
                     content.put(ean, amount + 1);
@@ -486,11 +488,11 @@ public class OutgoingInventoryFlow {
                     content.put(ean, 1);
                 }
 
-                units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").put(text, content);
+                units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").put(text, content);
             } else {
                 JSONObject content = new JSONObject();
                 content.put(ean, 1);
-                units.getJSONObject("store1").getJSONObject("stacks").getJSONObject("A").put(text, content);
+                units.getJSONObject(Main.username).getJSONObject("stacks").getJSONObject("A").put(text, content);
             }
 
             System.out.println(units);

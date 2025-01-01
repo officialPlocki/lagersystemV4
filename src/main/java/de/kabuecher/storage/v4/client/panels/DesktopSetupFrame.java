@@ -13,10 +13,9 @@ import java.io.IOException;
 
 public class DesktopSetupFrame extends JFrame {
 
-    private JComboBox<String> labelPrinterCombo;
-    private JComboBox<String> normalPrinterCombo;
-    private JButton saveButton;
-    private JFrame frame;
+    private final JComboBox<String> labelPrinterCombo;
+    private final JComboBox<String> normalPrinterCombo;
+    private final JFrame frame;
 
     public DesktopSetupFrame() {
 
@@ -46,7 +45,7 @@ public class DesktopSetupFrame extends JFrame {
         add(normalPrinterCombo);
 
         // Save Button
-        saveButton = new JButton("Save Printers");
+        JButton saveButton = new JButton("Save Printers");
         saveButton.addActionListener(new SaveButtonListener());
         add(saveButton);
 
@@ -61,7 +60,6 @@ public class DesktopSetupFrame extends JFrame {
             String labelPrinter = (String) labelPrinterCombo.getSelectedItem();
             String normalPrinter = (String) normalPrinterCombo.getSelectedItem();
 
-            // Call save method (implement this as needed)
             try {
                 savePrinterSettings(labelPrinter, normalPrinter);
             } catch (IOException ex) {

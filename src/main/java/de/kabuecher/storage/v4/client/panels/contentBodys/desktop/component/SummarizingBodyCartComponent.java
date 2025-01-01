@@ -24,8 +24,6 @@ public class SummarizingBodyCartComponent extends ComponentType {
 
         addButton("delete_button", delete_button);
         addButton("change_button", change_button);
-        addLabel("art_name_label", art_name_label);
-        addLabel("count_label", count_label);
 
         art_name_label.setText(name);
         count_label.setText(String.valueOf(count));
