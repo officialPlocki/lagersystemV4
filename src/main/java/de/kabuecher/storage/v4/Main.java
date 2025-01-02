@@ -11,6 +11,8 @@ import de.kabuecher.storage.v4.client.panels.DesktopSetupFrame;
 import de.kabuecher.storage.v4.server.UndertowServer;
 import de.kabuecher.storage.v4.server.console.ConsoleInputHandler;
 import de.kabuecher.storage.v4.server.console.command.UserCommand;
+import de.kabuecher.storage.v4.server.query.QueryMethod;
+import de.kabuecher.storage.v4.server.query.SevDeskQuery;
 import org.json.JSONObject;
 
 import javax.swing.*;

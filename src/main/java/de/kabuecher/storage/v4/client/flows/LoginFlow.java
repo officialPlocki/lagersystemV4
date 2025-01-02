@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class LoginFlow {
@@ -75,7 +74,6 @@ public class LoginFlow {
             Main.bodyHandler.setContentBody(null);
 
             Main.displayDriver.getPanel().getLogoutButton().setEnabled(true);
-
         } else {
             body.getLabel("action_label").setText("Ungültige Anmeldedaten oder Konto abgelaufen.");
         }

@@ -14,6 +14,10 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import de.kabuecher.storage.v4.Main;
 import de.kabuecher.storage.v4.client.panels.contentBodys.desktop.impl.BodyType;
+import de.kabuecher.storage.v4.client.sevdesk.Part;
+import de.kabuecher.storage.v4.client.sevdesk.SevDeskClient;
+import de.kabuecher.storage.v4.client.utils.LabelGenerator;
+import de.kabuecher.storage.v4.client.utils.Translateables;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPrintable;
 import org.apache.pdfbox.printing.Scaling;
@@ -33,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Objects;
 
 public class DesktopContentBodyHandler {
@@ -157,6 +162,32 @@ public class DesktopContentBodyHandler {
                         }
 
                         tmp.delete();
+                    } else if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F10) {
+                        Main.bodyHandler.setContentBody(null);
+                    } else if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F8) {
+                        Part part = new SevDeskClient().getPart("40059022");
+
+                        try {
+                            new LabelGenerator().generateLabel(part.getName(), new Translateables().getNameByPartID(part.getId()), List.of("Dies ist ein Mängelexemplar.", "Rückgabe aufgrund von Schäden ausgeschlossen."), new Translateables().getEANByPartID(part.getId()));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F7) {
+                        Part part = new SevDeskClient().getPart("40059017");
+
+                        try {
+                            new LabelGenerator().generateLabel(part.getName(), new Translateables().getNameByPartID(part.getId()), List.of("Dies ist ein Mängelexemplar.", "Rückgabe aufgrund von Schäden ausgeschlossen."), new Translateables().getEANByPartID(part.getId()));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else if(keyEvent.getID() == KeyEvent.KEY_PRESSED && keyEvent.getKeyCode() == KeyEvent.VK_F6) {
+                        Part part = new SevDeskClient().getPart("40059020");
+
+                        try {
+                            new LabelGenerator().generateLabel(part.getName(), new Translateables().getNameByPartID(part.getId()), List.of("Dies ist ein Mängelexemplar.", "Rückgabe aufgrund von Schäden ausgeschlossen."), new Translateables().getEANByPartID(part.getId()));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
 

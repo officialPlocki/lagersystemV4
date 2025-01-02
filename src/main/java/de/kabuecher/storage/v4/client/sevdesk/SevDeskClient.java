@@ -199,7 +199,8 @@ public class SevDeskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() == 200) {
                 JSONObject partJson = new JSONObject(response.body());
-                return new PartBuilder().buildPart(partJson.getJSONObject("objects"));
+                System.out.println(partJson);
+                return new PartBuilder().buildPart(partJson);
             } else {
                 return null;
             }
