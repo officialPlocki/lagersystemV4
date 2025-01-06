@@ -58,21 +58,19 @@ public class PackOrderFlow {
         SevDeskClient sevDesk = new SevDeskClient();
         currentOffer = offer;
 
-        if(offer != null) {
-            List<OfferPos> positions = sevDesk.getOrderPositions(offer.getId());
-            for(OfferPos pos : positions) {
-                JSONObject object = new UnitManagementClient().searchForItemInStore(Main.username, new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
-                if(object == null) {
-                    Main.bodyHandler.setContentBody(null);
-                    return;
+        List<OfferPos> positions = sevDesk.getOrderPositions(offer.getId());
+        for(OfferPos pos : positions) {
+            JSONObject object = new UnitManagementClient().searchForItemInStore(Main.username, new Translateables().getEANByPartID(pos.getPart().getId()), pos.getQuantity());
+            if(object == null) {
+                Main.bodyHandler.setContentBody(null);
+                return;
+            }
+            for(String key : object.keySet()) {
+                if(!keys.contains(pos.getPart().getId())) {
+                    keys.add(pos.getPart().getId());
                 }
-                for(String key : object.keySet()) {
-                    if(!keys.contains(pos.getPart().getId())) {
-                        keys.add(pos.getPart().getId());
-                    }
-                    subs.put(pos.getPart().getId(), subs.getOrDefault(pos.getPart().getId(), new JSONArray()).put(new JSONObject().put(key, object.getInt(key))));
-                    Main.addToLog("Added " + object.getInt(key) + " units of " + pos.getPart().getId() + " to order");
-                }
+                subs.put(pos.getPart().getId(), subs.getOrDefault(pos.getPart().getId(), new JSONArray()).put(new JSONObject().put(key, object.getInt(key))));
+                Main.addToLog("Added " + object.getInt(key) + " units of " + pos.getPart().getId() + " to order");
             }
         }
 
@@ -324,7 +322,7 @@ public class PackOrderFlow {
         sevDesk.printInvoiceID(invoice.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
 
         waitingBody.getProgressBar().setValue(8);
-        sevDesk.printOrderID(offer.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
+        sevDesk.printOrderID(deliveryNote.getId(), Main.getJsonFile().get("printerConfig").getString("printer"));
 
         waitingBody.getProgressBar().setValue(9);
 

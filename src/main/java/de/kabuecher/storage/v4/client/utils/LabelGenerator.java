@@ -29,8 +29,9 @@ public class LabelGenerator {
     public void generateLabel(String title, String subtitle, List<String> text, String ean) throws Exception {
         // Create a new document
         try (PDDocument document = new PDDocument()) {
+            PrinterJob job = PrinterJob.getPrinterJob();
             // Create a new page with dimensions 4x6 inches (in points: 288x432)
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(new PDRectangle((float) job.defaultPage().getWidth(), (float) job.defaultPage().getHeight()));
             document.addPage(page);
 
             // Start drawing content on the page
@@ -87,7 +88,6 @@ public class LabelGenerator {
 
             try {
                 PDDocument pdf = PDDocument.load(out.toByteArray());
-                PrinterJob job = PrinterJob.getPrinterJob();
 
                 for (PrintService printService : PrintServiceLookup.lookupPrintServices(null, null)) {
                     if(printService.getName().equals(Main.getJsonFile().get("printerConfig").getString("label_printer"))) {

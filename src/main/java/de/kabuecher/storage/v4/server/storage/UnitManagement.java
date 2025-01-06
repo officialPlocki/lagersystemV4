@@ -37,15 +37,23 @@ public class UnitManagement {
             return false;
         }
 
-        MySQLDelete delete = new MySQLDelete();
-        delete.prepare("storage");
-        delete.addRequirement("storeName", storeName);
-        delete.addRequirement("stackName", stackName);
-        delete.addRequirement("boxId", boxId);
-        delete.addRequirement("itemId", itemId);
-        delete.addRequirement("amount", amount);
-
-        delete.execute();
+        if(response.getInt("amount") == amount) {
+            MySQLDelete delete = new MySQLDelete();
+            delete.prepare("storage");
+            delete.addRequirement("storeName", storeName);
+            delete.addRequirement("stackName", stackName);
+            delete.addRequirement("boxId", boxId);
+            delete.addRequirement("itemId", itemId);
+            delete.execute();
+        } else {
+            MySQLPush update = new MySQLPush();
+            update.prepare("storage", "amount", response.getInt("amount") - amount);
+            update.addRequirement("storeName", storeName);
+            update.addRequirement("stackName", stackName);
+            update.addRequirement("boxId", boxId);
+            update.addRequirement("itemId", itemId);
+            update.execute();
+        }
         return true;
     }
 

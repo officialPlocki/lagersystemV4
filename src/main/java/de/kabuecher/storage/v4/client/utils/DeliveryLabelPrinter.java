@@ -38,7 +38,7 @@ public class DeliveryLabelPrinter {
         // Generate QR code
         BufferedImage qrCodeImage;
         try {
-            qrCodeImage = generateQRCodeImage(Base64.getEncoder().encodeToString(qrData.getBytes()));
+            qrCodeImage = generateQRCodeImage(qrData);
         } catch (WriterException e) {
             throw new RuntimeException(e);
         }
