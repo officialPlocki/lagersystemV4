@@ -56,7 +56,11 @@ public class SevDeskClient {
             if(response.statusCode() == 200) {
                 JSONObject offerJson = new JSONObject(response.body());
                 System.out.println(offerJson);
-                return new OfferBuilder().buildOffer(offerJson.getJSONArray("objects").getJSONObject(0));
+                if(offerJson.get("objects") instanceof JSONObject) {
+                    return new OfferBuilder().buildOffer(offerJson.getJSONObject("objects"));
+                } else {
+                    return new OfferBuilder().buildOffer(offerJson.getJSONArray("objects").getJSONObject(0));
+                }
             } else {
                 return null;
             }
@@ -171,7 +175,11 @@ public class SevDeskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() == 200) {
                 JSONObject invoiceJson = new JSONObject(response.body());
-                return new InvoiceBuilder().buildInvoice(invoiceJson.getJSONObject("objects"));
+                if(invoiceJson.get("objects") instanceof JSONObject) {
+                    return new InvoiceBuilder().buildInvoice(invoiceJson.getJSONObject("objects"));
+                } else {
+                    return new InvoiceBuilder().buildInvoice(invoiceJson.getJSONArray("objects").getJSONObject(0));
+                }
             } else {
                 return null;
             }
@@ -264,7 +272,11 @@ public class SevDeskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() == 200) {
                 JSONObject contactJson = new JSONObject(response.body());
-                return new ContactBuilder().buildContact(contactJson.getJSONObject("objects"));
+                if (contactJson.get("objects") instanceof JSONObject) {
+                    return new ContactBuilder().buildContact(contactJson.getJSONObject("objects"));
+                } else {
+                    return new ContactBuilder().buildContact(contactJson.getJSONArray("objects").getJSONObject(0));
+                }
             } else {
                 return null;
             }
@@ -292,7 +304,11 @@ public class SevDeskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() == 200) {
                 JSONObject contactJson = new JSONObject(response.body());
-                return contactJson.getJSONObject("objects").getString("contactID");
+                if (contactJson.get("objects") instanceof JSONObject) {
+                    return contactJson.getJSONObject("objects").getString("contactID");
+                } else {
+                    return contactJson.getJSONArray("objects").getJSONObject(0).getString("contactID");
+                }
             } else {
                 return null;
             }
