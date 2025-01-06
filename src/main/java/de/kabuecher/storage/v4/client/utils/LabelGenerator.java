@@ -30,7 +30,7 @@ public class LabelGenerator {
         // Create a new document
         try (PDDocument document = new PDDocument()) {
             // Create a new page with dimensions 4x6 inches (in points: 288x432)
-            PDPage page = new PDPage(new PDRectangle(288, 432));
+            PDPage page = new PDPage();
             document.addPage(page);
 
             // Start drawing content on the page
